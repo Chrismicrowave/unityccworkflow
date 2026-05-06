@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {"command": "bash .claude/hooks/session-start.sh"}
+    ],
+    "Stop": [
+      {"command": "bash .claude/hooks/stop.sh"}
+    ],
+    "UserPromptSubmit": [
+      {"command": "bash .claude/hooks/user-prompt-submit.sh"}
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "mcp__coplay-mcp__list_game_objects_in_hierarchy",
+        "command": "bash .claude/hooks/pre-list-hierarchy.sh"
+      },
+      {
+        "matcher": "mcp__coplay-mcp__set_property",
+        "command": "bash .claude/hooks/pre-set-property.sh"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "write|edit",
+        "command": "bash .claude/hooks/post-edit-script.sh"
+      }
+    ]
+  }
+}

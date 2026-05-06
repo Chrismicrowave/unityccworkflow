@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "rules": {
+    "session-start-injection": true,
+    "post-edit-script-stop": true,
+    "pre-list-hierarchy-rate-limit": true,
+    "pre-set-property-name-refusal": true,
+    "pre-set-property-playmode-refusal": true,
+    "user-prompt-submit-injection": true,
+    "stop-session-digest": true,
+    "post-compaction-reinject": true,
+    "pre-commit-design-nudge": true
+  },
+  "lastChanged": "2026-05-02T00:00:00Z",
+  "changedBy": "init"
+}

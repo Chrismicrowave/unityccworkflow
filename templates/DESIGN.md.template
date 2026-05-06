@@ -1,0 +1,52 @@
+# [Project Name] — Design
+
+<!-- unityccworkflow DESIGN.md template. Fill in sections, set stability tiers honestly. -->
+<!-- Stability tiers: locked (CHALLENGE always) | settled (CHALLENGE + options) | in-flux (note conflict, proceed) | TBD (ask user before implementing) -->
+
+## Core loop  <!-- stability: locked -->
+
+[3 sentences: what the player does, why it's satisfying, what the tension is]
+
+## Game principles  <!-- stability: locked -->
+
+- [Principle 1: e.g. "Twitch suppression: only cutscenes pause it. High-stakes dialogue does NOT pause it."]
+- [Principle 2]
+- [Principle 3]
+
+## Non-goals  <!-- stability: locked -->
+
+- [What is explicitly out of scope for this milestone]
+- [e.g. "No save system this milestone"]
+
+---
+
+## Unit behaviors
+
+### [Unit Name]  <!-- stability: settled, last-updated: YYYY-MM-DD -->
+
+- States: [State A] → [State B] → [State C]
+- Trigger conditions: [what causes each transition]
+- Should never: [hard constraints]
+- Twitch interaction: [does it pause/not pause twitch]
+- [Other relevant behavior contracts]
+
+### [Unit Name]  <!-- stability: in-flux -->
+
+- [Fill in as design stabilizes]
+
+---
+
+## Scene contracts  <!-- stability: in-flux -->
+
+### [Scene Name]
+
+- Purpose: [what this scene is for]
+- Load-bearing entities: [GOs that must exist and their roles]
+- Exit conditions: [what triggers scene transition]
+
+---
+
+## Open questions  <!-- stability: TBD -->
+
+- [Question 1: answer this before implementing related feature]
+- [Question 2]

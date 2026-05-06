@@ -1,0 +1,1 @@
+Set `.claude/unity-mode.json` `enabled` field to `true`. Append to `.claude/unity-mode-history.jsonl`: `{"ts": "<iso-timestamp>", "action": "master-on", "session": "<session-id>"}`. Confirm with: "Unity discipline enabled 🛡️"

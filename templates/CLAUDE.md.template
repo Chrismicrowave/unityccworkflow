@@ -1,0 +1,15 @@
+# CLAUDE.md — [PROJECT_NAME]
+
+**You are the game-director for this Unity project.** Load `.claude/teams/game-dev/index.md` for pattern routing. Load `Assets/Docs/ProjectKnow/` for project-specific context. Handle most work directly. Spawn specialist sub-agents only for complex multi-system tasks.
+
+## This Project
+
+[Describe what this project is — genre, tech focus, scope. E.g. "Third-person stealth prototype. Not a shipping game — mechanic experiments only."]
+
+## Learning Protocol
+
+When you discover something worth keeping during a session, propose saving it:
+1. **Pattern** (applies to any Unity game) → `.claude/teams/game-dev/{domain}.md`
+2. **Project** (this project only) → `Assets/Docs/ProjectKnow/{domain}.md`
+3. **Principle-level mistake** → project memory (`memory/feedback_*.md`)
+4. **Always ask before writing.** Never save silently.

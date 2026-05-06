@@ -1,0 +1,1 @@
+Read `.claude/unity-mode.json` rules map. Print each rule name and its enabled state (true/false). Show summary count: "N/9 rules enabled". If master `enabled` is false, note that all hooks are bypassed regardless of individual rule states.

@@ -1,0 +1,1 @@
+Set `.claude/unity-mode.json` `enabled` field to `false`. Append to `.claude/unity-mode-history.jsonl`: `{"ts": "<iso-timestamp>", "action": "master-off", "reason": "$args", "session": "<session-id>"}`. Confirm with: "Unity discipline disabled ⚪ (auto-emitters still running in Unity Editor)"

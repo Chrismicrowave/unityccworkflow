@@ -121,7 +121,18 @@ if (Test-Path $packTeamDir) {
     Write-Host "   - No team domain files in pack yet"
 }
 
-# 10. Create Assets/Docs/ProjectKnow/ directory for project-specific knowledge
+# 10. Write pack version tracking file
+Write-Host "10. Writing pack version..."
+$versionInfo = @{
+    name    = "unityccworkflow"
+    version = "0.2"
+    source  = "https://github.com/Chrismicrowave/unityccworkflow"
+} | ConvertTo-Json -Compress
+$pkgVersionPath = "$ProjectPath/.claude/pack-version.json"
+Set-Content -Path $pkgVersionPath -Value $versionInfo -NoNewline -Force
+Write-Host "   ✓ .claude/pack-version.json (v0.2)"
+
+# 11. Create Assets/Docs/ProjectKnow/ directory for project-specific knowledge
 $projectKnowDir = "$ProjectPath/Assets/Docs/ProjectKnow"
 New-Item -ItemType Directory -Force $projectKnowDir | Out-Null
 Write-Host "   ✓ Assets/Docs/ProjectKnow/ (add domain .md files here as the project grows)"

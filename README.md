@@ -101,6 +101,7 @@ unityccworkflow/
 | `/unity-rule-status` | List all rules with N/9 count |
 | `/unity-rule-reset` | Reset all rules to enabled |
 | `/unityccworkflow-init` | Init pack from inside CC session |
+| `/unityccworkflow-upgrade` | Upgrade pack files to latest version from local pack source |
 
 ## What is NOT overwritten by re-running init
 

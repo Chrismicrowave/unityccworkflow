@@ -14,6 +14,7 @@
 - **Stop Play mode before scene edits** — Changes made during Play Mode are discarded when Play Mode stops. Check `playMode` state first.
 - **Save scene before MCP GO search** — Before calling MCP tools that search the scene hierarchy, save the scene first. Unsaved edits don't exist on disk.
 - **Commit after each edit** — After every meaningful edit (script change, scene config, rule update), commit immediately with a clear message. Do not batch unrelated changes.
+- **RefHub for editor-assigned references only** — Use a central `RefHub` for references wired in the inspector: cameras, UI, shared systems. Not for gameplay interactions between runtime entities. Find-based discovery (tag, type) is appropriate for player↔NPC and other runtime relationships.
 
 ## Learning Protocol
 

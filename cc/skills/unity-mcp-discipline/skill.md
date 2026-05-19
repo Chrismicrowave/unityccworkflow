@@ -4,24 +4,26 @@
 
 ## Core rules
 
-1. **Scene orientation** — Read `Library/AgentMirror/SceneMirror.json` once at task start. Do not call `list_game_objects_in_hierarchy` unless `SceneMirror.meta.json` shows emittedAt > 5 minutes ago.
+1. **Save scene before GO search** — Before calling any MCP tool that searches the scene hierarchy (`list_game_objects_in_hierarchy`, `get_game_object_info`, etc.), save the scene first via `save_scene`. Unsaved scene edits (objects added/renamed by the user) don't exist on disk and won't be found by file-based searches.
 
-2. **Identity** — Resolve targets by stableId. If you don't have one, read `SceneMirror.json` to find it. Never address GameObjects by name/path alone.
+2. **Scene orientation** — Read `Library/AgentMirror/SceneMirror.json` once at task start. Do not call `list_game_objects_in_hierarchy` unless `SceneMirror.meta.json` shows emittedAt > 5 minutes ago.
 
-3. **Compile discipline** — After any `.cs` edit batch, run `check_compile_errors` exactly once. On any error: STOP and surface the full error list to the user. Do not attempt to auto-fix in a loop.
+3. **Identity** — Resolve targets by stableId. If you don't have one, read `SceneMirror.json` to find it. Never address GameObjects by name/path alone.
 
-4. **Behavior debugging** — Before debugging FSM/animator/dialogue behavior, read `Library/AgentMirror/AnimatorDump.json` and the relevant `DESIGN.md` section. Do not guess from source code.
+4. **Compile discipline** — After any `.cs` edit batch, run `check_compile_errors` exactly once. On any error: STOP and surface the full error list to the user. Do not attempt to auto-fix in a loop.
 
-5. **Prefab vs instance** — If the user says "edit X" and X exists as both a prefab asset and a scene instance, ASK which before proceeding.
+5. **Behavior debugging** — Before debugging FSM/animator/dialogue behavior, read `Library/AgentMirror/AnimatorDump.json` and the relevant `DESIGN.md` section. Do not guess from source code.
 
-6. **CHALLENGE** — Before proposing any change that contradicts `DESIGN.md` (any `<!-- stability: locked -->` or `<!-- stability: settled -->` section), STOP and present:
+6. **Prefab vs instance** — If the user says "edit X" and X exists as both a prefab asset and a scene instance, ASK which before proceeding.
+
+7. **CHALLENGE** — Before proposing any change that contradicts `DESIGN.md` (any `<!-- stability: locked -->` or `<!-- stability: settled -->` section), STOP and present:
    > "This contradicts DESIGN.md §[section] (which says [Y]). Options: (a) update doc + follow new intent, (b) follow doc + ignore request, (c) one-off override without doc change."
 
-7. **AMEND** — If user message contains `[INTENT-CHANGE-CANDIDATE]` (injected by hook) or explicit intent-change language ("actually", "from now on", "I want X to", "change the rule"), propose a `DESIGN.md` diff BEFORE touching code. On confirmation: update doc first, then implement.
+8. **AMEND** — If user message contains `[INTENT-CHANGE-CANDIDATE]` (injected by hook) or explicit intent-change language ("actually", "from now on", "I want X to", "change the rule"), propose a `DESIGN.md` diff BEFORE touching code. On confirmation: update doc first, then implement.
 
-8. **Play mode** — Check `EditorApplication.isPlaying` state before any scene edit. If game is running, stop it first unless user explicitly says to edit during play.
+9. **Play mode** — Check `EditorApplication.isPlaying` state before any scene edit. If game is running, stop it first unless user explicitly says to edit during play.
 
-9. **Animator state** — When asked why a runtime behavior is happening, read `AnimatorDump.json` and `InspectorRefs.json` before reading C# source. The answer is often in a transition condition or a UnityEvent wiring, not in code.
+10. **Animator state** — When asked why a runtime behavior is happening, read `AnimatorDump.json` and `InspectorRefs.json` before reading C# source. The answer is often in a transition condition or a UnityEvent wiring, not in code.
 
 ## CHALLENGE flow (detailed)
 

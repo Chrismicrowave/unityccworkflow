@@ -12,6 +12,8 @@
 - **Always use the new Input System** — Use `InputActionAsset` with generated C# wrapper classes. Never poll `Keyboard.current`/`Mouse.current` directly or use legacy `Input.GetKey`.
 - **Never `??` with Unity Objects** — Use `if (x == null)` only. Unity fake-nulls bypass C# `??` reference equality.
 - **Stop Play mode before scene edits** — Changes made during Play Mode are discarded when Play Mode stops. Check `playMode` state first.
+- **Save scene before MCP GO search** — Before calling MCP tools that search the scene hierarchy, save the scene first. Unsaved edits don't exist on disk.
+- **Commit after each edit** — After every meaningful edit (script change, scene config, rule update), commit immediately with a clear message. Do not batch unrelated changes.
 
 ## Learning Protocol
 

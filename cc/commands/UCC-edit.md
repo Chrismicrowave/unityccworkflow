@@ -18,6 +18,17 @@ Run this command whenever you're about to edit a file that exists in both the pr
 
 If the file to edit is NOT in this table, do NOT run this command — it's a project-only file.
 
+### Critical rule links
+
+The `cc/teams/game-dev/*.md` files contain full pattern documentation. Their condensed one-line versions live in `CLAUDE.md`'s **Code Rules** section. These must stay in sync:
+
+| Full pattern (pack) | Condensed rule (CLAUDE.md) |
+|---|---|
+| `cc/teams/game-dev/systems.md` | `CLAUDE.md` → Code Rules section |
+| (any future `cc/teams/game-dev/*.md` with a rule) | `CLAUDE.md` → Code Rules section |
+
+When adding/removing/updating a critical rule in a pack domain file, always update the corresponding rule in CLAUDE.md's Code Rules. When editing a Code Rule in CLAUDE.md, always update the full pattern in the pack domain file.
+
 ## Steps
 
 1. **Identify the file** — Determine which file(s) need editing. Check the table above. If a file maps to the pack, both locations must be edited.
@@ -26,8 +37,12 @@ If the file to edit is NOT in this table, do NOT run this command — it's a pro
 
 3. **Edit both** — Apply the identical change to both files. Use `Edit` tool for each. The changes MUST be identical (except the template `[PLACEHOLDER]` differences in `CLAUDE.md` vs `CLAUDE.md.template`).
 
-4. **Commit project** — `git add <file>` && `git commit -m "<type>: <message>"` in the Unity project repo.
+4. **Sync critical rules** — If the edited file is a pack domain file (`cc/teams/game-dev/*.md`) or `CLAUDE.md`/`CLAUDE.md.template`, check whether a critical rule was added/removed/updated. If so, update the other end:
+   - Pack rule changed → update the condensed rule in both `CLAUDE.md` and `templates/CLAUDE.md.template`
+   - CLAUDE.md rule changed → update the full pattern in the corresponding `cc/teams/game-dev/*.md` and its project copy
 
-5. **Commit local pack** — `cd D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\ && git add <file> && git commit -m "<type>: <message>"` in the pack repo.
+5. **Commit project** — `git add <file>` && `git commit -m "<type>: <message>"` in the Unity project repo.
 
-6. **Report** — Show both commit hashes and confirm both copies are in sync.
+6. **Commit local pack** — `cd D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\ && git add <file> && git commit -m "<type>: <message>"` in the pack repo.
+
+7. **Report** — Show both commit hashes and confirm both copies are in sync.

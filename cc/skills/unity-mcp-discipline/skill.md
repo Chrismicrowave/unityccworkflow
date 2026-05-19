@@ -25,6 +25,10 @@
 
 10. **Animator state** — When asked why a runtime behavior is happening, read `AnimatorDump.json` and `InspectorRefs.json` before reading C# source. The answer is often in a transition condition or a UnityEvent wiring, not in code.
 
+11. **Wire references via MCP, never ask** — When you add a new serialized field (`public` / `[SerializeField]`) to a MonoBehaviour that exists in the scene, always wire it immediately via `set_property`. Never tell the user "you'll need to wire it in the inspector." Exceptions: asset references (materials, prefabs) and targets that can't be resolved by hierarchy path. Use `get_game_object_info` to verify the target has the right component type.
+
+12. **No name-based lookups** — Never use `FindObjectOfType`, `FindGameObjectWithTag`, `GameObject.Find`, `Get<T>(string)`, or `Register(string, ...)` in runtime code. Use `RefHub` direct properties or inspector `[SerializeField]` drag-and-drop instead. The only exception: you have a solid reason AND you've proposed it to the user for approval first.
+
 ## CHALLENGE flow (detailed)
 
 When you identify a CHALLENGE situation:

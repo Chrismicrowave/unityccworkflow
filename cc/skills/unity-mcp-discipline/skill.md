@@ -29,6 +29,8 @@
 
 12. **No name-based lookups** — Never use `FindObjectOfType`, `FindGameObjectWithTag`, `GameObject.Find`, `Get<T>(string)`, or `Register(string, ...)` in runtime code. Use `RefHub` direct properties or inspector `[SerializeField]` drag-and-drop instead. The only exception: you have a solid reason AND you've proposed it to the user for approval first.
 
+13. **Grep for all callers before removing a generic API** — When you remove or change a generic/overloaded method (e.g. `Get<T>(string)`), grep the whole project for every call site. Generic methods still compile after the pattern is removed as a named lookup — callers silently return null at runtime. Search by method name AND invocation pattern.
+
 ## CHALLENGE flow (detailed)
 
 When you identify a CHALLENGE situation:

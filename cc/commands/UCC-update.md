@@ -33,6 +33,9 @@ Update the unityccworkflow pack files in this project to the latest version — 
    - `unity/Editor/AgentMirror/` → `Assets/Editor/AgentMirror/`
    - `unity/Runtime/StableId.cs` → `Assets/Scripts/Core/StableId.cs`
 
-8. **Update version** — Write the new version to `.claude/pack-version.json`.
+8. **Update version** — Read the pack version from `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\pack-info.json`. Write `.claude/pack-version.json` with:
+   - `version`: the new pack version
+   - `sourceCommit`: run `git log --oneline -1 --format=%h` in the pack dir
+   - `installedAt`: current timestamp
 
 9. **Report result** — Show what changed, the new version, and prompt the user to commit the updates.

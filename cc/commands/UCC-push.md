@@ -34,13 +34,20 @@ Push the unityccworkflow pack to GitHub. Checks both the local pack and the curr
    - Custom
    - Ask user which bump to use (plain text question).
 
-6. **Update pack-info.json** — Write the new version into `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\pack-info.json`.
+6. **Update pack-info.json** — Write the new version into `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\pack-info.json`. Also stamp with source project and timestamp:
+   - Add `"lastPushedFrom": "<ProjectName>"` — e.g. `"TechLead (GDS5-P3)"`
+   - Add `"lastPushedAt": "<iso-timestamp>"` — use `$(date -Iseconds)` or PowerShell `(Get-Date -Format "o")`
 
-7. **Commit the version bump** — `git add pack-info.json && git commit -m "release: v{new_version}"`
+7. **Commit** — `git add -A && git commit -m "release: v{new_version} from <ProjectName>"`
 
 8. **Tag and push** — `git tag v{new_version}` && `git push origin master --tags`
 
-9. **Report result** — Show:
+9. **Update project version** — Write `.claude/pack-version.json` in the project:
+   - `version`: the new version
+   - `sourceCommit`: `git log --oneline -1 --format=%h`
+   - `installedAt`: current timestamp
+
+10. **Report result** — Show:
    - Version bumped from → to
    - Commit log (last 3 entries)
    - Tag pushed

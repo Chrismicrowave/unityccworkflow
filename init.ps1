@@ -123,14 +123,15 @@ if (Test-Path $packTeamDir) {
 
 # 10. Write pack version tracking file
 Write-Host "10. Writing pack version..."
+$pkgInfo = Get-Content "$pkg/pack-info.json" | ConvertFrom-Json
 $versionInfo = @{
-    name    = "unityccworkflow"
-    version = "0.2"
-    source  = "https://github.com/Chrismicrowave/unityccworkflow"
+    version     = $pkgInfo.version
+    sourceCommit = ""
+    installedAt = (Get-Date -Format "o")
 } | ConvertTo-Json -Compress
 $pkgVersionPath = "$ProjectPath/.claude/pack-version.json"
 Set-Content -Path $pkgVersionPath -Value $versionInfo -NoNewline -Force
-Write-Host "   ✓ .claude/pack-version.json (v0.2)"
+Write-Host "   ✓ .claude/pack-version.json (v$($pkgInfo.version))"
 
 # 11. Create Assets/Docs/ProjectKnow/ directory for project-specific knowledge
 $projectKnowDir = "$ProjectPath/Assets/Docs/ProjectKnow"

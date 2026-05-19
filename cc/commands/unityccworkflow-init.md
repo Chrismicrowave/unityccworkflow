@@ -10,13 +10,13 @@ Initialize the unityccworkflow solution pack for the current Unity project.
 
 3. Run `.\init.ps1 -ProjectPath "<CWD>"` (Windows) or `bash init.sh "<CWD>"` (Mac/Linux) from the pack path.
 
-4. Report what was created or copied: C# files, hook scripts, commands, skill, Assets/Docs/DESIGN.md template.
+4. Report what was created or copied: C# files, hook scripts, commands, skill, DESIGN.md template.
 
 5. Print the 5 manual steps remaining:
    - Open Unity — AgentMirror emitters compile and populate Library/AgentMirror/
    - In Unity: Tools → AgentMirror → Add StableId to selection (recursive) on scene root and prefab roots
-   - Fill in Assets/Docs/DESIGN.md — core loop, principles, at least one unit behavior, non-goals
-   - Open CC in project root and run `/unity-on`
+   - Fill in DESIGN.md — core loop, principles, at least one unit behavior, non-goals
+   - Fill in CLAUDE.md — replace [PROJECT_NAME] and project description (auto-loaded every session)
    - Verify with `/unity-status` — should show 🛡️ 9/9
 
 6. Offer: "Shall I also run the StableId bootstrap via MCP now?" If yes: call `execute_script` to run `StableIdBootstrap.AddToSelection()` on all root scene objects.

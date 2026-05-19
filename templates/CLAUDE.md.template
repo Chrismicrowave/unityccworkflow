@@ -6,6 +6,13 @@
 
 [Describe what this project is — genre, tech focus, scope. E.g. "Third-person stealth prototype. Not a shipping game — mechanic experiments only."]
 
+## Code Rules
+
+- **Editor values beat script defaults** — For any `public` or `[SerializeField] private` variable, always check the Unity Editor inspector value. Inspector-configured values are authoritative; script defaults are just fallbacks.
+- **Always use the new Input System** — Use `InputActionAsset` with generated C# wrapper classes. Never poll `Keyboard.current`/`Mouse.current` directly or use legacy `Input.GetKey`.
+- **Never `??` with Unity Objects** — Use `if (x == null)` only. Unity fake-nulls bypass C# `??` reference equality.
+- **Stop Play mode before scene edits** — Changes made during Play Mode are discarded when Play Mode stops. Check `playMode` state first.
+
 ## Learning Protocol
 
 When you discover something worth keeping during a session, propose saving it:

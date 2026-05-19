@@ -25,7 +25,7 @@ These files contain reusable patterns loaded on demand. **Scan this list at sess
 | `animation.md` | Spider-Verse frame-rate technique (speed=0 + manual Update), Unity 6 quirk (speed must be >0 for manual Update to work), Mixamo FBX import workflow (Humanoid + same Avatar + Bake Into Pose Root Y), RootT.y curve binding, normalizedTime polling for action end, per-state FPS override pattern |
 | `cinemachine.md` | Cinemachine 3 Follow/LookAt are C# properties not SerializedProperty, scene-save requirement for editor script changes, MCP tool set_property limitations, Resources.FindObjectsOfTypeAll finds inactive cameras, GameObject.Find name-only search, priority-based camera takeover |
 | `gameplay.md` | *(not yet populated)* |
-| `systems.md` | Script-controlled initial active state (Awake/Start, not scene toggle) |
+| `systems.md` | *(not yet populated)* |
 | `ui.md` | *(not yet populated)* |
 | `ai.md` | *(not yet populated)* |
 | `shaders.md` | Texel size calculation (never `_ScreenParams.zw`), depth Sobel kernel, single-pass wiggle, FPS quantization, FullScreenPassRendererFeature setup, noise texture requirements |

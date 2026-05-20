@@ -33,6 +33,74 @@ AssetDatabase.CreateAsset(copy, path);
 
 `CopySerialized` copies all serialized fields from source to destination. Works on AnimationClip, Material, ScriptableObject, and any `UnityEngine.Object`.
 
+## Trigger Input Actions Via Script, Not Simulated Keypresses
+
+When testing input-triggered functions in Play Mode, call the C# method directly via MCP `execute_script` instead of simulating key presses (SendKeys, PowerShell input injection, etc.). Simulated keypresses suffer from focus issues, timing problems, and don't work in batch/headless contexts.
+
+**Pattern:**
+1. Create a `[PublicAPI]` or editor-only static method in the target class (or a separate debug class)
+2. Call it via `execute_script` in the MCP session
+3. Read Unity console logs to verify the result
+
+```csharp
+// Assets/Scripts/Editor/DebugThing.cs
+public static class DebugThing
+{
+    public static void Execute()
+    {
+        var mgr = Object.FindFirstObjectByType<SomeManager>();
+        mgr.DoSomething();
+    }
+}
+```
+
+```csharp
+// Or call a method directly on a component
+var camMgr = Object.FindFirstObjectByType<CameraManager>();
+if (camMgr != null) camMgr.ToggleFirstPersonWithCut();
+```
+
+**Caveat:** The `execute_script` call runs synchronously in the editor — it won't see results from coroutines/yield instructions that span frames. For frame-spanning operations, add debug logs in the coroutine and check the console afterward.
+
+## Diagnostic Instrumentation for Input/Action Pipelines
+
+When debugging a multi-layer input pipeline (key press → dispatch → handler → result), add layered `Debug.Log` at every boundary *before* trying to fix. This makes any single Play Mode test pinpoint exactly which link is broken:
+
+```csharp
+// Layer 1: Input handler (e.g., PlayerController)
+void OnToggleFirstPerson(InputAction.CallbackContext ctx)
+{
+    Debug.Log($"[PlayerController] Q pressed, CameraManager ref: {_refHub?.CameraManager != null}");
+    _refHub?.CameraManager.ToggleFirstPersonWithCut();
+}
+
+// Layer 2: Dispatch bridge (e.g., CameraManager)
+public void ToggleFirstPersonWithCut()
+{
+    var brain = Camera.main?.GetComponent<CinemachineBrain>();
+    Debug.Log($"[CameraManager] ToggleFirstPersonWithCut — _firstPerson={_firstPerson}, brain={brain != null}");
+    // ...
+}
+
+// Layer 3: Action handler (e.g., FPSCamMode)
+void OnEnable()
+{
+    Debug.Log($"[FPSCamMode] OnEnable — _cam={_cam != null}, _attackAction subscribed={_subscribed}");
+    _attackAction.performed += OnTakePhoto;
+    _subscribed = true;
+}
+```
+
+**Pattern:**
+1. Instrument every method in the call chain with a unique prefix `[ClassName]` for grep filtering
+2. Log reference resolution state (null checks, what resolved) — not just "entered method"
+3. Log branch decisions (which `if` was taken, why)
+4. Run one Play Mode test, check the console in one pass
+5. Remove all instrumentation in a cleanup commit once the bug is found
+
+The instrumentation is disposable — commit it separately so the fix commit is clean.
+`git diff` or checking Unity's console makes the before/after obvious.
+
 ## Adding FullScreenPassRendererFeature Programmatically
 
 For editor setup scripts that configure a renderer with a fullscreen effect:

@@ -15,6 +15,7 @@ Load this at session start. Read domain files on demand. **These are technique-p
 | Editor scripts, custom inspectors, build pipelines, asset processors | `tools.md` |
 | Shaders, fullscreen effects, Sobel kernels, texel size, noise wiggle | `shaders.md` |
 | Testing, performance profiling, frame timing | `qa.md` |
+| **AI limitations** — known blind spots that need user correction | `blind-spots.md` |
 
 ## Pattern Inventory (available knowledge)
 
@@ -31,6 +32,12 @@ These files contain reusable patterns loaded on demand. **Scan this list at sess
 | `shaders.md` | Texel size calculation (never `_ScreenParams.zw`), depth Sobel kernel, single-pass wiggle, FPS quantization, FullScreenPassRendererFeature setup, noise texture requirements |
 | `tools.md` | *(not yet populated)* |
 | `qa.md` | *(not yet populated)* |
+
+## Game-Director Rules (Claude behavior — always apply)
+
+These override default Claude behavior when working on game projects.
+
+- **Push on command, no questions** — When the user says "push", execute immediately. Stage everything, commit with a reasonable message, push. No checks, no stalling, no questions.
 
 ## Non-Negotiables (Unity engine — always apply)
 

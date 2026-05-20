@@ -4,32 +4,24 @@
 
 ## Core rules
 
-1. **Save scene before GO search** — Before calling any MCP tool that searches the scene hierarchy (`list_game_objects_in_hierarchy`, `get_game_object_info`, etc.), save the scene first via `save_scene`. Unsaved scene edits (objects added/renamed by the user) don't exist on disk and won't be found by file-based searches.
+1. **Scene orientation** — Read `Library/AgentMirror/SceneMirror.json` once at task start. Do not call `list_game_objects_in_hierarchy` unless `SceneMirror.meta.json` shows emittedAt > 5 minutes ago.
 
-2. **Scene orientation** — Read `Library/AgentMirror/SceneMirror.json` once at task start. Do not call `list_game_objects_in_hierarchy` unless `SceneMirror.meta.json` shows emittedAt > 5 minutes ago.
+2. **Identity** — Resolve targets by stableId. If you don't have one, read `SceneMirror.json` to find it. Never address GameObjects by name/path alone.
 
-3. **Identity** — Resolve targets by stableId. If you don't have one, read `SceneMirror.json` to find it. Never address GameObjects by name/path alone.
+3. **Compile discipline** — After any `.cs` edit batch, run `check_compile_errors` exactly once. On any error: STOP and surface the full error list to the user. Do not attempt to auto-fix in a loop.
 
-4. **Compile discipline** — After any `.cs` edit batch, run `check_compile_errors` exactly once. On any error: STOP and surface the full error list to the user. Do not attempt to auto-fix in a loop.
+4. **Behavior debugging** — Before debugging FSM/animator/dialogue behavior, read `Library/AgentMirror/AnimatorDump.json` and the relevant `DESIGN.md` section. Do not guess from source code.
 
-5. **Behavior debugging** — Before debugging FSM/animator/dialogue behavior, read `Library/AgentMirror/AnimatorDump.json` and the relevant `DESIGN.md` section. Do not guess from source code.
+5. **Prefab vs instance** — If the user says "edit X" and X exists as both a prefab asset and a scene instance, ASK which before proceeding.
 
-6. **Prefab vs instance** — If the user says "edit X" and X exists as both a prefab asset and a scene instance, ASK which before proceeding.
-
-7. **CHALLENGE** — Before proposing any change that contradicts `DESIGN.md` (any `<!-- stability: locked -->` or `<!-- stability: settled -->` section), STOP and present:
+6. **CHALLENGE** — Before proposing any change that contradicts `DESIGN.md` (any `<!-- stability: locked -->` or `<!-- stability: settled -->` section), STOP and present:
    > "This contradicts DESIGN.md §[section] (which says [Y]). Options: (a) update doc + follow new intent, (b) follow doc + ignore request, (c) one-off override without doc change."
 
-8. **AMEND** — If user message contains `[INTENT-CHANGE-CANDIDATE]` (injected by hook) or explicit intent-change language ("actually", "from now on", "I want X to", "change the rule"), propose a `DESIGN.md` diff BEFORE touching code. On confirmation: update doc first, then implement.
+7. **AMEND** — If user message contains `[INTENT-CHANGE-CANDIDATE]` (injected by hook) or explicit intent-change language ("actually", "from now on", "I want X to", "change the rule"), propose a `DESIGN.md` diff BEFORE touching code. On confirmation: update doc first, then implement.
 
-9. **Play mode** — Check `EditorApplication.isPlaying` state before any scene edit. If game is running, stop it first unless user explicitly says to edit during play.
+8. **Play mode** — Check `EditorApplication.isPlaying` state before any scene edit. If game is running, stop it first unless user explicitly says to edit during play.
 
-10. **Animator state** — When asked why a runtime behavior is happening, read `AnimatorDump.json` and `InspectorRefs.json` before reading C# source. The answer is often in a transition condition or a UnityEvent wiring, not in code.
-
-11. **Wire references via MCP, never ask** — When you add a new serialized field (`public` / `[SerializeField]`) to a MonoBehaviour that exists in the scene, always wire it immediately via `set_property`. Never tell the user "you'll need to wire it in the inspector." Exceptions: asset references (materials, prefabs) and targets that can't be resolved by hierarchy path. Use `get_game_object_info` to verify the target has the right component type.
-
-12. **No name-based lookups** — Never use `FindObjectOfType`, `FindGameObjectWithTag`, `GameObject.Find`, `Get<T>(string)`, or `Register(string, ...)` in runtime code. Use `RefHub` direct properties or inspector `[SerializeField]` drag-and-drop instead. The only exception: you have a solid reason AND you've proposed it to the user for approval first.
-
-13. **Grep for all callers before removing a generic API** — When you remove or change a generic/overloaded method (e.g. `Get<T>(string)`), grep the whole project for every call site. Generic methods still compile after the pattern is removed as a named lookup — callers silently return null at runtime. Search by method name AND invocation pattern.
+9. **Animator state** — When asked why a runtime behavior is happening, read `AnimatorDump.json` and `InspectorRefs.json` before reading C# source. The answer is often in a transition condition or a UnityEvent wiring, not in code.
 
 ## CHALLENGE flow (detailed)
 

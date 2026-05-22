@@ -18,14 +18,7 @@ Once set up, use `/updateUnityMirror` to sync the latest changes.
    ```
    Explain: "Worktree created at `<mirror-path>` (detached HEAD at `<commit>`). You can open this folder in Unity Hub to playtest."
 
-4. **Offer Library symlink** — Ask: "Symlink the Library folder to avoid reimporting everything in Unity?" (plain text). This saves hours of import time.
-   - If yes, symlink:
-     ```powershell
-     New-Item -ItemType SymbolicLink -Path <mirror-path>\Library -Target <project-path>\Library
-     ```
-   - If the mirror already has a Library folder, delete it first (confirm with user).
-
-5. **Report** — Show:
+4. **Report** — Show:
    - Mirror path
    - Current commit hash and message
    - How to use: "Open `<mirror-path>` in Unity Hub to playtest."

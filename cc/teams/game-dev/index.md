@@ -44,7 +44,6 @@ These override default Claude behavior when working on game projects.
 - **Never `??` with Unity Objects** — `if (x == null)` only. Fake-nulls bypass C# reference equality.
 - **Check serialized overrides** before changing code defaults. Scene/prefab values beat script defaults.
 - **Never edit GameObjects, components, or scene references while Play Mode is active.** Changes made during Play Mode are discarded when Play Mode stops. Always call `stop_game` (or have the user stop Play Mode) before using `set_property`, `set_transform`, `add_component`, or any MCP tool that modifies scene objects. To check: `get_unity_editor_state` returns `playMode: true/false`.
-- **UI bars: `localScale.x` or `sizeDelta.x`** — never `Image.fillAmount` without sprite.
 - **Input System throughout** — Input System actions for gameplay, `InputSystemUIInputModule` on EventSystem for UI. Never legacy `StandaloneInputModule` or `Input.GetKey`.
 - **animator.speed = 0** when using FrameRateSampler — never advance time via Update otherwise.
 

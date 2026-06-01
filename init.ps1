@@ -32,11 +32,14 @@ New-Item -ItemType Directory -Force "$ProjectPath/.claude/hooks" | Out-Null
 Copy-Item "$pkg/cc/hooks/*" "$ProjectPath/.claude/hooks/" -Force
 Write-Host "   ✓ .claude/hooks/*.sh"
 
-# 3. Copy skill
-Write-Host "3. Copying discipline skill..."
+# 3. Copy skills
+Write-Host "3. Copying skills..."
 New-Item -ItemType Directory -Force "$ProjectPath/.claude/skills/unity-mcp-discipline" | Out-Null
 Copy-Item "$pkg/cc/skills/unity-mcp-discipline/skill.md" "$ProjectPath/.claude/skills/unity-mcp-discipline/skill.md" -Force
 Write-Host "   ✓ .claude/skills/unity-mcp-discipline/skill.md"
+New-Item -ItemType Directory -Force "$ProjectPath/.claude/skills/RefractorUnityProject" | Out-Null
+Copy-Item "$pkg/cc/skills/RefractorUnityProject/SKILL.md" "$ProjectPath/.claude/skills/RefractorUnityProject/SKILL.md" -Force
+Write-Host "   ✓ .claude/skills/RefractorUnityProject/SKILL.md"
 
 # 4. Copy slash commands
 Write-Host "4. Copying slash commands..."

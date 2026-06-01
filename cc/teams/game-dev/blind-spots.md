@@ -29,6 +29,14 @@ Can create AnimatorController state machines and blend trees correctly, but tran
 
 Knows *what* causes performance cost (draw calls, GC allocations, batching breaks, overdraw) but cannot predict *how much* without a profiler. Estimates may be off by orders of magnitude.
 
+## Prefab unpacking
+
+**The pattern:** Calls `PrefabUtility.UnpackPrefabInstance()` to modify prefab instance children (add/remove child GameObjects, change hierarchy) without asking first. This destroys the prefab connection and prevents changes from propagating.
+
+**The fix:** Never unpack. Instead, override properties on the instance (`SetProperty` via MCP), modify the prefab asset directly (if the change should apply to all instances), or use `SerializedObject`/`SerializedProperty` on the instance for non-destructive overrides. Only unpack when the user explicitly says to.
+
+See `prefabs.md` in this pack for the full pattern.
+
 ## Build/platform issues
 
 Little practical experience with:

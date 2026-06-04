@@ -18,6 +18,7 @@ public static class AnimatorsSnapshotEmitter
     }
 
     /// <summary>Full emit — public so StableIdBootstrap can trigger on demand.</summary>
+    [MenuItem("Tools/AgentMirror/UnitySnapshot/Animators Snapshot")]
     public static void EmitNow()
     {
         try

@@ -79,7 +79,7 @@ public static class FolderSnapshotEmitter
         EmitNow();
     }
 
-    [MenuItem("Tools/AgentMirror/Generate Folder Snapshot")]
+    [MenuItem("Tools/AgentMirror/UnitySnapshot/Folder Snapshot")]
     public static void EmitNow()
     {
         try

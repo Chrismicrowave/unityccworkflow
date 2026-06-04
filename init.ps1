@@ -32,6 +32,16 @@ New-Item -ItemType Directory -Force "$ProjectPath/.claude/hooks" | Out-Null
 Copy-Item "$pkg/cc/hooks/*" "$ProjectPath/.claude/hooks/" -Force
 Write-Host "   ✓ .claude/hooks/*.sh"
 
+# 2b. Install git hooks (pre-commit scene saver)
+$gitHooksDir = "$ProjectPath/.git/hooks"
+if (Test-Path $gitHooksDir) {
+    Write-Host "2b. Installing git hooks..."
+    Copy-Item "$pkg/cc/git-hooks/*" "$gitHooksDir/" -Force
+    Write-Host "   ✓ .git/hooks/pre-commit (scene auto-save)"
+} else {
+    Write-Host "2b. No .git/hooks directory — skipping git hook install."
+}
+
 # 3. Copy skills
 Write-Host "3. Copying skills..."
 New-Item -ItemType Directory -Force "$ProjectPath/.claude/skills/unity-mcp-discipline" | Out-Null
@@ -167,6 +177,12 @@ Write-Host "           Open CLAUDE.md and replace [PROJECT_NAME] and the project
 Write-Host "           This is what tells Claude what the game is about each session automatically."
 Write-Host ""
 Write-Host "  Step 5 — Smoke test"
-Write-Host "           /unity-status → should show 🛡️ 9/9"
+Write-Host "           /unity-status → should show 🛡️ 11/11 (was 9/9 in v0.4)"
 Write-Host "           Ask: 'what entities are in the scene?' → reads SceneMirror, no MCP list calls"
 Write-Host "           Edit a .cs file → compile-stop hook fires"
+Write-Host "           Enter Play Mode, try set_property → HOOK BLOCKS it"
+Write-Host ""
+Write-Host "  Step 6 — Component Registry (optional)"
+Write-Host "           Tools → AgentMirror → Generate Component Registry"
+Write-Host "           Produces Library/AgentMirror/ComponentRegistry.md"
+Write-Host "           Claude reads this automatically at session start"

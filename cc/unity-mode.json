@@ -9,8 +9,11 @@
     "user-prompt-submit-injection": true,
     "stop-session-digest": true,
     "post-compaction-reinject": true,
-    "pre-commit-design-nudge": true
+    "pre-commit-design-nudge": true,
+
+    "pre-tool-use-write-guard": true,
+    "post-suggest-auto-commit": true
   },
-  "lastChanged": "2026-05-02T00:00:00Z",
-  "changedBy": "init"
+  "lastChanged": "2026-06-04T00:00:00Z",
+  "changedBy": "v0.5-upgrade"
 }

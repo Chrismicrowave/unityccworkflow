@@ -21,7 +21,7 @@ Extract patterns and project knowledge from the current Unity project and backpo
    > "Found [N] new learnings: [list]. Shall I save to [file paths]?"
    - Wait for user confirmation before writing.
 
-5. **Backport to pack** — Copy updated `.claude/teams/game-dev/{domain}.md` files to `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\cc\teams\game-dev\{domain}.md` so future projects get the patterns.
+5. **Backport to pack** — Copy updated `.claude/teams/game-dev/{domain}.md` files to `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\cc\teams\game-dev\{domain}.md` so future projects get the patterns.
 
 6. **Report** — Summarise:
    - Which files were updated/created

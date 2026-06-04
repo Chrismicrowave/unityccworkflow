@@ -4,7 +4,7 @@ Push the unityccworkflow pack to GitHub. Checks both the local pack and the curr
 
 ## Steps
 
-1. **Check local pack git status** — In `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\`:
+1. **Check local pack git status** — In `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\`:
    - Read `pack-info.json` for current version.
    - Run `git log --oneline -5` to see recent commits.
    - Run `git status --short` to check for uncommitted changes.
@@ -34,7 +34,7 @@ Push the unityccworkflow pack to GitHub. Checks both the local pack and the curr
    - Custom
    - Ask user which bump to use (plain text question).
 
-6. **Update pack-info.json** — Write the new version into `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\pack-info.json`. Also stamp with source project and timestamp:
+6. **Update pack-info.json** — Write the new version into `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\pack-info.json`. Also stamp with source project and timestamp:
    - Add `"lastPushedFrom": "<ProjectName>"` — e.g. `"TechLead (GDS5-P3)"`
    - Add `"lastPushedAt": "<iso-timestamp>"` — use `$(date -Iseconds)` or PowerShell `(Get-Date -Format "o")`
 

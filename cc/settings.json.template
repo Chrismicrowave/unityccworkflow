@@ -15,14 +15,18 @@
         "command": "bash .claude/hooks/pre-list-hierarchy.sh"
       },
       {
-        "matcher": "mcp__coplay-mcp__set_property",
-        "command": "bash .claude/hooks/pre-set-property.sh"
+        "matcher": "mcp__coplay-mcp__set_property|mcp__coplay-mcp__set_transform|mcp__coplay-mcp__set_rect_transform|mcp__coplay-mcp__add_component|mcp__coplay-mcp__remove_component|mcp__coplay-mcp__execute_script|mcp__coplay-mcp__create_game_object|mcp__coplay-mcp__delete_game_object|mcp__coplay-mcp__duplicate_game_object|mcp__coplay-mcp__parent_game_object|mcp__coplay-mcp__rename_game_object|mcp__coplay-mcp__set_layer|mcp__coplay-mcp__set_tag|mcp__coplay-mcp__assign_material|mcp__coplay-mcp__set_ui_text|mcp__coplay-mcp__set_ui_layout|mcp__coplay-mcp__set_animation_curves|mcp__coplay-mcp__modify_animator_controller",
+        "command": "bash .claude/hooks/pre-tool-use-write-guard.sh"
       }
     ],
     "PostToolUse": [
       {
         "matcher": "write|edit",
         "command": "bash .claude/hooks/post-edit-script.sh"
+      },
+      {
+        "matcher": ".*",
+        "command": "bash .claude/hooks/post-suggest-auto-commit.sh"
       }
     ]
   }

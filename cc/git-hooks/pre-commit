@@ -1,0 +1,39 @@
+#!/bin/bash
+# Git pre-commit hook — saves Unity scenes before commit
+# Installed by init.ps1 into .git/hooks/pre-commit
+#
+# Signals the already-running Unity Editor (via PlayModeTracker's SceneSaver)
+# to save all open scenes, then waits up to 30s for confirmation.
+# Falls through gracefully if Unity isn't running.
+
+# Only for Unity projects
+[ -d "Assets" ] && [ -d "ProjectSettings" ] || exit 0
+[ -d "Library/AgentMirror" ] || exit 0
+
+# Signal Unity to save scenes
+touch "Library/AgentMirror/.save-scene-signal"
+echo "Saving Unity scenes (signalled Unity Editor)..."
+
+# Wait up to 30 seconds for Unity to respond
+for i in $(seq 30); do
+  if [ -f "Library/AgentMirror/.save-scene-done" ]; then
+    RESULT=$(cat "Library/AgentMirror/.save-scene-done")
+    rm -f "Library/AgentMirror/.save-scene-signal" "Library/AgentMirror/.save-scene-done"
+    case "$RESULT" in
+      ok)
+        echo "✓ Scenes saved."
+        exit 0
+        ;;
+      error:*)
+        echo "⚠ Scene save had issues: ${RESULT#error:}"
+        exit 0  # soft — don't block commit
+        ;;
+    esac
+  fi
+  sleep 1
+done
+
+echo "⚠ Unity did not respond to save signal (timeout)."
+echo "  Is the Unity Editor running?"
+echo "  Committing anyway — consider saving manually."
+exit 0  # Never block commit

@@ -6,7 +6,7 @@ Update the unityccworkflow pack files in this project to the latest version — 
 
 1. **Auto-accept: always confirm upgrade** — The user invoked this skill, so proceed without asking "are you sure?".
 
-2. **Pull latest pack from GitHub** — In the local pack directory (`D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\`):
+2. **Pull latest pack from GitHub** — In the local pack directory (`D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\`):
    - Stash any local changes: `git stash push -m "UCC-update auto-stash $(date)"`
    - Check out master: `git checkout master`
    - Pull: `git pull origin master`
@@ -14,7 +14,7 @@ Update the unityccworkflow pack files in this project to the latest version — 
 
 3. **Read project version** — Read `.claude/pack-version.json` to see what's currently installed.
 
-4. **Read pack version** — Read `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\pack-info.json` to see the current pack version.
+4. **Read pack version** — Read `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\pack-info.json` to see the current pack version.
 
 5. **Compare** — If versions match, report "Already up to date (v{version})" and stop. If the pack is older, stop with a warning. If the project is behind, proceed.
 
@@ -33,7 +33,7 @@ Update the unityccworkflow pack files in this project to the latest version — 
    - `unity/Editor/AgentMirror/` → `Assets/Editor/AgentMirror/`
    - `unity/Runtime/StableId.cs` → `Assets/Scripts/Core/StableId.cs`
 
-8. **Update version** — Read the pack version from `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\pack-info.json`. Write `.claude/pack-version.json` with:
+8. **Update version** — Read the pack version from `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\pack-info.json`. Write `.claude/pack-version.json` with:
    - `version`: the new pack version
    - `sourceCommit`: run `git log --oneline -1 --format=%h` in the pack dir
    - `installedAt`: current timestamp

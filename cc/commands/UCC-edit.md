@@ -43,6 +43,6 @@ When adding/removing/updating a critical rule in a pack domain file, always upda
 
 5. **Commit project** — `git add <file>` && `git commit -m "<type>: <message>"` in the Unity project repo.
 
-6. **Commit local pack** — `cd D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\v0.1\ && git add <file> && git commit -m "<type>: <message>"` in the pack repo.
+6. **Commit local pack** — `cd D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\ && git add <file> && git commit -m "<type>: <message>"` in the pack repo.
 
 7. **Report** — Show both commit hashes and confirm both copies are in sync.

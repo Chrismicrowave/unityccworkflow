@@ -58,13 +58,13 @@ public static class SceneMirrorEmitter
             }
 
             string json = SerializeEntities(entities);
-            AgentMirrorConfig.SafeWriteAllText(AgentMirrorConfig.SceneMirrorPath, json);
+            AgentMirrorConfig.SafeWriteAllText(AgentMirrorConfig.SceneTreeSnapshotPath, json);
 
             // Meta file
             string meta = $"{{\"emittedAt\":\"{DateTime.UtcNow:yyyy-MM-ddTHH:mm:ssZ}\"," +
                           $"\"entityCount\":{entities.Count}," +
                           $"\"sceneCount\":{sceneCount}}}";
-            AgentMirrorConfig.SafeWriteAllText(AgentMirrorConfig.SceneMirrorMetaPath, meta);
+            AgentMirrorConfig.SafeWriteAllText(AgentMirrorConfig.SceneTreeSnapshotMetaPath, meta);
         }
         catch (Exception ex)
         {

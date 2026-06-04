@@ -45,7 +45,7 @@ public static class StableIdBootstrap
         // Each emitter listens to EditorApplication.hierarchyChanged or runs its own full scan.
         SceneMirrorEmitter.EmitNow();
         AsmdefGraphEmitter.EmitNow();
-        AnimatorDumpEmitter.EmitNow();
+        AnimatorsSnapshotEmitter.EmitNow();
         ProjectDigestEmitter.EmitNow();
         PrefabGraphEmitter.EmitNow();
         InspectorRefsEmitter.EmitNow();

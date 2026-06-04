@@ -40,7 +40,7 @@ public class RefactorEventEmitter : AssetPostprocessor
         if (!sceneOrPrefabChanged) return;
 
         // Load the current SceneMirror to compare
-        string mirrorPath = AgentMirrorConfig.SceneMirrorPath;
+        string mirrorPath = AgentMirrorConfig.SceneTreeSnapshotPath;
         if (!File.Exists(mirrorPath)) return;
 
         var currentIds = ExtractIdsFromMirror(mirrorPath);

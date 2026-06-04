@@ -10,10 +10,10 @@ public static class AgentMirrorConfig
 {
     // ── Output paths (relative to Unity project root) ──────────────────────
     public const string OutputDir             = "Library/AgentMirror";
-    public const string SceneMirrorPath       = "Library/AgentMirror/SceneMirror.json";
-    public const string SceneMirrorMetaPath   = "Library/AgentMirror/SceneMirror.meta.json";
+    public const string SceneTreeSnapshotPath   = "Library/AgentMirror/SceneTreeSnapshot.json";
+    public const string SceneTreeSnapshotMetaPath = "Library/AgentMirror/SceneTreeSnapshot.meta.json";
     public const string AsmdefGraphPath       = "Library/AgentMirror/AsmdefGraph.json";
-    public const string AnimatorDumpPath      = "Library/AgentMirror/AnimatorDump.json";
+    public const string AnimatorsSnapshotPath  = "Library/AgentMirror/AnimatorsSnapshot.json";
     public const string SessionLedgerPath     = "Library/AgentMirror/SessionLedger.jsonl";
     public const string ProjectDigestPath     = "Library/AgentMirror/ProjectDigest.md";
     public const string CorrectionLedgerPath  = "Library/AgentMirror/CorrectionLedger.md";

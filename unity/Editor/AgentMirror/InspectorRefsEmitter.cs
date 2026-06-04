@@ -30,7 +30,7 @@ public static class InspectorRefsEmitter
 
         // Load SceneMirror to resolve fileID → stableId
         var fileIdToStableId = new Dictionary<string, string>();
-        if (File.Exists(AgentMirrorConfig.SceneMirrorPath))
+        if (File.Exists(AgentMirrorConfig.SceneTreeSnapshotPath))
         {
             // Simple parse: look for stableId fields in SceneMirror
             // SceneMirror is keyed by stableId, not fileID — best-effort reverse map

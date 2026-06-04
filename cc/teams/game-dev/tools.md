@@ -2,6 +2,26 @@
 
 General Unity editor tool patterns reusable across projects.
 
+## Wire references via MCP, never ask
+
+When you add a new serialized field (`public` / `[SerializeField]`) to a MonoBehaviour in the scene, wire it immediately via the `set_property` MCP tool. **Never tell the user to do it manually.**
+
+**Pattern:**
+1. Add the field in code
+2. Wait for Unity to compile (compile-stop hook fires)
+3. Use `get_game_object_info` to find the target component's hierarchy path
+4. Call `set_property` to assign the reference immediately
+
+**Exceptions** (these genuinely require manual wiring):
+- Asset references (materials, prefabs, ScriptableObjects) — must be dragged from the Project window
+- Targets that can't be resolved by hierarchy path (e.g., runtime-only objects)
+- User explicitly says "I'll wire it"
+
+**Why:**
+- Every serialized null slot is a runtime bug waiting to happen
+- The user shouldn't have to open the inspector to fix something the AI just wrote
+- Wire-it-yourself means the feature works on the very first Play Mode test
+
 ## Extracting Animation Clips from FBX
 
 Use `EditorUtility.CopySerialized` to copy named clips from the FBX sub-assets into standalone `.anim` files:

@@ -49,6 +49,26 @@ void Start() { var pc = RefHub.Instance.PlayerController; }
 
 **Trade-off:** simpler initial setup, but introduces startup-order dependencies. The `??` operator silently ignores Unity fake-null. Only viable for small projects.
 
+## No name-based lookups
+
+**Never use `FindObjectOfType`, `FindGameObjectWithTag`, `GameObject.Find`, or named `Get<T>(string)` / `Register(string, ...)` patterns in runtime code.**
+
+These create hidden dependencies that silently break when tags change, objects are renamed, or scene structure shifts:
+
+| Method | Problem |
+|--------|---------|
+| `FindObjectOfType<T>()` | Slow (scans all objects), returns arbitrary instance if multiples exist |
+| `FindGameObjectWithTag` | Silent null if tag is wrong or object is inactive |
+| `GameObject.Find("name")` | Silent null if renamed or reparented |
+| `GetComponent<T>("name")` / `Register("name", ...)` | No compile-time checking, string mismatch bugs |
+
+**Instead:**
+- **RefHub direct properties** for shared systems — every dependency visible in the inspector
+- **`[SerializeField]` drag-and-drop** for per-consumer references
+- **Tag/type-based lookup at specific points** only when the object genuinely can't be known at edit time (e.g., runtime-spawned entities) — and even then, consider a registry pattern
+
+**If you have a solid reason to use a name-based lookup** (e.g., truly dynamic objects), propose it to the user first with the specific rationale.
+
 ## Input Action Asset debugging
 
 **When a binding doesn't fire, check the raw JSON for HTML-escaped paths.**

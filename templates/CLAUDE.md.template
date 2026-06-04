@@ -8,8 +8,10 @@
 
 ## Code Rules
 
+- **No name-based lookups** — Never use `FindObjectOfType`, `FindGameObjectWithTag`, `GameObject.Find`, or named `Get<T>(string)` / `Register(string, ...)` lookups in runtime code. Use `RefHub` direct properties or inspector `[SerializeField]` drag-and-drop. If you have a solid reason for a name lookup, propose it to the user first.
 - **Editor values beat script defaults** — For any `public` or `[SerializeField] private` variable, always check the Unity Editor inspector value. Inspector-configured values are authoritative; script defaults are just fallbacks.
 - **Always use the new Input System** — Use `InputActionAsset` with generated C# wrapper classes. Never poll `Keyboard.current`/`Mouse.current` directly or use legacy `Input.GetKey`.
+- **Wire references via MCP, never ask** — When you add a new serialized field to a MonoBehaviour in the scene, wire it immediately via `set_property`. Never tell the user to do it. Exceptions: asset references (materials, prefabs), and targets unresolvable by hierarchy path.
 - **Never `??` with Unity Objects** — Use `if (x == null)` only. Unity fake-nulls bypass C# `??` reference equality.
 - **Stop Play mode before scene edits** — Changes made during Play Mode are discarded when Play Mode stops. Check `playMode` state first.
 - **Save scene before MCP GO search** — Before calling MCP tools that search the scene hierarchy, save the scene first. Unsaved edits don't exist on disk.
@@ -22,6 +24,6 @@
 
 When you discover something worth keeping during a session, propose saving it:
 1. **Pattern** (applies to any Unity game) → `.claude/teams/game-dev/{domain}.md`
-2. **Project** (this project only) → `Assets/Docs/ProjectKnow/{domain}.md`
+2. **Project** (this prototype only) → `Assets/Docs/ProjectKnow/{domain}.md`
 3. **Principle-level mistake** → project memory (`memory/feedback_*.md`)
 4. **Always ask before writing.** Never save silently.

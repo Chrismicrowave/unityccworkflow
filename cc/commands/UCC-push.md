@@ -1,31 +1,26 @@
 # UCC-push
 
-Push the unityccworkflow pack to GitHub. Checks both the local pack and the current Unity project for the latest state, presents a diff summary, and confirms before pushing.
+Push the unityccworkflow pack to GitHub. Backports project divergences first, then versions and pushes.
 
 ## Steps
 
-1. **Check local pack git status** — In `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\`:
+1. **Backport project divergences** — Run `UCC-backport` flow:
+   - Check divergences on all tracked paths (hooks, commands, AgentMirror, settings.json hooks section, CLAUDE.md rules)
+   - Present diff summary and ask approval per file
+   - Copy approved files from project → pack
+   - Commit to local pack: `git add -A && git commit -m "backport: $(basename $(git rev-parse --show-toplevel 2>/dev/null || echo 'project')) — $(date +%Y-%m-%d)"`
+
+2. **Check local pack git status** — In `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\`:
    - Read `pack-info.json` for current version.
    - Run `git log --oneline -5` to see recent commits.
    - Run `git status --short` to check for uncommitted changes.
    - Run `git log --oneline HEAD..origin/master` to see unpulled remote commits (if any).
    - Run `git log --oneline origin/master..HEAD` to see unpushed local commits.
 
-2. **Check divergences** — For each synced path pair, run `git diff --no-index` to detect changes:
-   - `.claude/hooks/` ↔ `cc/hooks/`
-   - `.claude/skills/unity-mcp-discipline/` ↔ `cc/skills/unity-mcp-discipline/`
-   - `.claude/commands/UCC-*.md` ↔ `cc/commands/UCC-*.md`
-   - `Assets/Editor/AgentMirror/` ↔ `unity/Editor/AgentMirror/`
-   - `Assets/Scripts/Core/StableId.cs` ↔ `unity/Runtime/StableId.cs`
-
-3. **Auto-capture project changes** — If any divergences are found, copy changed files **from project → pack**. This ensures project improvements are saved to UCCPack automatically.
-   - Copy divergent files from each project path to its pack counterpart.
-   - Report which files were captured.
-
-4. **Present summary** — Show:
-   - Local pack version (from `pack-info.json`)
-   - Local pack unpushed commits vs origin
-   - Any files captured from the project (or note that none diverged)
+3. **Present summary** — Show:
+   - What was backported from the project
+   - Local pack version
+   - Unpushed commits vs origin
 
 5. **Determine new version** — Parse current version from `pack-info.json`. Propose bump:
    - Patch (default — usually the right choice)

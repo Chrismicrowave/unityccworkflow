@@ -50,6 +50,31 @@ EditorSceneManager.SaveOpenScenes();
 - `set_property` MCP tool for Follow/LookAt GameObject references on Cinemachine cameras may report success but not persist to the scene.
 - For reliable programmatic changes to Cinemachine cameras, use `execute_script` with direct C# property assignment + `EditorSceneManager.SaveOpenScenes()`.
 
+## OutputChannel is a bitmask, not an enum index
+
+In Cinemachine 3, the `CinemachineCamera.OutputChannel` field is a **bitmask**, not a simple enum index.
+
+| Value | Channel |
+|-------|---------|
+| 1 | Default |
+| 2 | Channel01 |
+| 4 | Channel02 |
+| 3 | Default + Channel01 |
+
+When setting via MCP `set_property`:
+```
+OutputChannel = 2   → Channel01
+OutputChannel = 1   → Default
+```
+
+Use the integer value, not the channel name string. The `get_game_object_info` output displays the resolved name (e.g. `"Channel01"` or `"Default, Channel01"`).
+
+The `CinemachineBrain.ChannelMask` follows the same bitmask scheme. To isolate a brain to a single channel:
+- Set brain's `ChannelMask` to the same integer value as the camera's `OutputChannel`
+- This prevents the brain from processing virtual cameras on other channels
+
+**Use case:** split-screen co-op where each player's CinemachineBrain should only see their own cameras. Assign P1's cameras to Default (1) and P2's cameras to Channel01 (2), then set each brain's ChannelMask accordingly.
+
 ## Finding Cinemachine Cameras
 
 - **`Resources.FindObjectsOfTypeAll<CinemachineCamera>()`** — finds cameras even when they are inactive (not enabled). Useful when searching for cameras that are toggled on/off by mode systems.

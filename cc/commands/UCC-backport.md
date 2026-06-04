@@ -25,6 +25,7 @@ UCC-update    →  sync pack → project
    | `Assets/Scripts/Core/StableId.cs` | `unity/Runtime/StableId.cs` | Runtime component |
    | `.claude/settings.json` (hooks section) | `cc/settings.json.pack` | Hook matchers only |
    | `CLAUDE.md` (Code Rules) | `templates/CLAUDE.md.template` | Rules section only |
+   | `.claude/teams/game-dev/*.md` | `cc/teams/game-dev/*.md` | Domain pattern files |
 
    The following are **never** suggested — they're project-specific:
    - MCP server config in `settings.json`
@@ -34,14 +35,20 @@ UCC-update    →  sync pack → project
    - `.gitignore`, `.git/`
    - `CLAUDE.md` project description / context (only Code Rules are candidates)
 
-2. **Present diff summary** — Show each divergent file with a brief description of what changed:
+2. **Analyze direction** — For each divergent file, determine whether the project or pack is ahead:
+   - **Project ahead** (new content in project, pack missing it) → safe to backport
+   - **Pack ahead** (new content in pack, project missing it) → project needs update, not backport
+   - **Both changed** (content diverged in both directions) → manual merge needed
+
+   Use diff sizes to gauge: compare line counts and diff hunk sizes. A large `+` diff on the project side with no corresponding `+` on the pack side = project ahead.
+
+3. **Present diff summary** — Show each divergent file with direction analysis:
    ```
    ── Divergent files ──
-   [hooks]  pre-tool-use-write-guard.sh  — added scene-save signal
-   [hooks]  pre-git-commit-guard.sh      — new file
-   [cmds]   UCC-backport.md              — new file
-   [rules]  CLAUDE.md → template         — "save before MCP write" rule added
-
+   [ahead project→pack]  cinemachine.md  — 24 lines added (OutputChannel bitmask pattern)
+   [ahead project→pack]  systems.md      — 65 lines added (emitter guard, per-player orbit)
+   [new]                 tools.md        — doesn't exist in pack yet (hook-editor signal pattern)
+   
    ── Skipped (project-specific) ──
    settings.json — MCP server config (pack only tracks hooks section)
    CLAUDE.md project description — not a Code Rule

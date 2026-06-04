@@ -181,6 +181,54 @@ Changes made during Play Mode are discarded when Play Mode stops. Always check t
 
 **Why:** Unity discards all runtime modifications when exiting Play Mode. If you add a component, move a GameObject, or change a serialized property during Play Mode, it's gone the moment the user stops the game. This includes MCP tool calls — `add_component`, `set_property`, `set_transform`, etc. all write to the scene's in-memory state which doesn't persist past Play Mode.
 
+## Hook-Editor Communication via Signal Files
+
+Bash hooks can't call Unity methods directly. To trigger Unity-side actions from a hook, use the **signal file pattern**:
+
+1. Hook writes a marker file to `Library/AgentMirror/.signal-name`
+2. `[InitializeOnLoad]` editor script polls for the file in `EditorApplication.update`
+3. Script performs the action, writes a done file
+4. Hook waits for done file (with timeout), then cleans up
+
+**Pattern:**
+
+```csharp
+// Editor side — polls for signal
+[InitializeOnLoad]
+public static class SceneSaver
+{
+    static SceneSaver()
+    {
+        EditorApplication.update += PollSignal;
+    }
+    
+    private static void PollSignal()
+    {
+        string signal = "Library/AgentMirror/.my-signal";
+        string done   = "Library/AgentMirror/.my-signal-done";
+        if (!File.Exists(signal)) return;
+        
+        File.Delete(signal);
+        DoWork();
+        File.WriteAllText(done, "ok");
+    }
+}
+```
+
+```bash
+# Hook side — writes signal, waits for response
+echo "work" > "Library/AgentMirror/.my-signal"
+for i in $(seq 1 20); do
+  [ -f "Library/AgentMirror/.my-signal-done" ] && break
+  sleep 0.5
+done
+rm -f "Library/AgentMirror/.my-signal" "Library/AgentMirror/.my-signal-done"
+```
+
+**Uses in UCCPack:**
+- `SceneSaver.cs` + `pre-tool-use-write-guard.sh` — saves scene before every MCP write
+- `SnapshotInitializer.cs` + `session-start.sh` — generates initial snapshots on first Claude session
+
 ## Save scene before MCP hierarchy search
 
 Before calling MCP tools that search the scene hierarchy (`list_game_objects_in_hierarchy`, `get_game_object_info`), save the scene first. Unsaved edits don't exist on disk and won't be found by hierarchy searches.

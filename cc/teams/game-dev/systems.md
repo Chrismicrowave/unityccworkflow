@@ -39,6 +39,52 @@ public class SomeConsumer : MonoBehaviour
 
 **Trade-off:** requires inspector wiring for every consumer.
 
+## Editor Emitter Guard Pattern
+
+For `[InitializeOnLoad]` editor scripts that run heavy scans, guard the static constructor to skip in non-LLM projects:
+
+```csharp
+static MyEmitter()
+{
+    // Skip if snapshot files don't exist yet (first gen is triggered by UCCPack)
+    if (!System.IO.File.Exists("Library/AgentMirror/MyOutput.json")) return;
+
+    EditorApplication.hierarchyChanged += OnChange;
+    EditorApplication.update += PollEmit;
+}
+```
+
+This avoids startup overhead for artist teammates who don't use Claude. The first generation is triggered by `SnapshotInitializer` (via session-start signal) or manual menu item. After that, the files exist and auto-watch activates.
+
+## Per-Player Camera Orbit (Split-Screen)
+
+When using Cinemachine in split-screen co-op, each player needs their own camera orbit controlled by their own input source. The built-in `CinemachineInputAxisController` doesn't support per-player routing reliably (PlayerIndex is inconsistent).
+
+**Solution:** `OrbitInputRouter` — reads the Look action from a specific `PlayerInput` and writes directly to `CinemachineOrbitalFollow.HorizontalAxis.Value` / `VerticalAxis.Value` (which are public fields in Cinemachine 3).
+
+```csharp
+void Update()
+{
+    if (_orbital == null || _lookAction == null) return;
+
+    Vector2 look = _lookAction.ReadValue<Vector2>();
+
+    if (Mathf.Abs(look.x) > 0.001f)
+        _orbital.HorizontalAxis.Value += look.x * _horizontalSpeed * Time.deltaTime;
+
+    if (Mathf.Abs(look.y) > 0.001f)
+    {
+        float vertical = _invertVertical ? -look.y : look.y;
+        _orbital.VerticalAxis.Value += vertical * _verticalSpeed * Time.deltaTime;
+    }
+}
+```
+
+- Separate mouse/gamepad speed profiles (`_mouseHorizontalSpeed` vs `_gamepadHorizontalSpeed`)
+- Auto-detects active control scheme via `PlayerInput.currentControlScheme`
+- Disables built-in `CinemachineInputAxisController` on Awake to prevent double input
+- Exposes all speeds and invert toggle as public properties for settings UI
+
 ### Approach B: Self-registration (not recommended)
 
 Systems register themselves in Awake, consumers resolve in Start:

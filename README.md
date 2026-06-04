@@ -33,9 +33,9 @@ unityccworkflow/
 │   ├── Editor/AgentMirror/
 │   │   ├── AgentMirrorConfig.cs        — shared paths/constants
 │   │   ├── StableIdBootstrap.cs        — menu item: add StableId recursively
-│   │   ├── SceneMirrorEmitter.cs       — hierarchy → SceneMirror.json
+│   │   ├── SceneTreeSnapshotEmitter.cs       — hierarchy → SceneTreeSnapshot.json
 │   │   ├── AsmdefGraphEmitter.cs       — assemblies → AsmdefGraph.json
-│   │   ├── AnimatorDumpEmitter.cs      — animators → AnimatorDump.json
+│   │   ├── AnimatorsSnapshotEmitter.cs — animators → AnimatorsSnapshot.json
 │   │   ├── UndoGroupWrapper.cs         — named undo groups for agent edits
 │   │   ├── ProjectDigestEmitter.cs     — git log + session tail → ProjectDigest.md
 │   │   ├── RefactorEventEmitter.cs     — mass-rename detector → RefactorEvent.json
@@ -45,9 +45,9 @@ unityccworkflow/
 │       └── StableId.cs                 — GUID component, survives rename/reparent
 ├── cc/
 │   ├── hooks/
-│   │   ├── session-start.sh            — inject ProjectDigest + SceneMirror + CorrectionLedger
+│   │   ├── session-start.sh            — inject ProjectDigest + SceneTreeSnapshot + CorrectionLedger
 │   │   ├── stop.sh                     — session digest + CorrectionLedger append
-│   │   ├── user-prompt-submit.sh       — intent-change detection + SceneMirror name injection
+│   │   ├── user-prompt-submit.sh       — intent-change detection + SceneTreeSnapshot name injection
 │   │   ├── post-edit-script.sh         — compile-once signal after .cs edit
 │   │   ├── pre-list-hierarchy.sh       — rate-limit MCP hierarchy calls when mirror is fresh
 │   │   ├── pre-set-property.sh         — playmode guard + stableId reminder
@@ -91,9 +91,9 @@ Every GameObject in every open scene (and all prefab assets), with:
 
 **Token strategy:** ~2MB raw. Not loaded by default. The AI requests it on-demand when it needs field-level data (before writes, when debugging a specific component).
 
-### Domain 2: SceneMirror — Hierarchy Tree
+### Domain 2: SceneTreeSnapshot — Hierarchy Tree
 
-**File:** `Library/AgentMirror/SceneMirror.json`
+**File:** `Library/AgentMirror/SceneTreeSnapshot.json`
 
 Lightweight hierarchy tree only — every GO's path, name, StableId, and component list. No field values.
 
@@ -112,9 +112,9 @@ Complete recursive scan of `Assets/` — every file and folder with:
 
 Replaces `list_files`/`Glob`/`search_files` MCP calls.
 
-### Domain 4: AnimatorDump — Animation Controllers
+### Domain 4: AnimatorsSnapshot — Animation Controllers
 
-**File:** `Library/AgentMirror/AnimatorDump.json`
+**File:** `Library/AgentMirror/AnimatorsSnapshot.json`
 
 All AnimatorControllers in the project — layers, states, transitions, parameters, conditions. Separate because animation is a distinct domain with a complex schema that would bloat UnitySnapshot.
 

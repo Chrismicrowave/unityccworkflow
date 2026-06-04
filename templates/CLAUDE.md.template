@@ -16,6 +16,7 @@
 - **Commit after each edit** — After every meaningful edit (script change, scene config, rule update), commit immediately with a clear message. Do not batch unrelated changes.
 - **RefHub for shared system references** — Centralize commonly-referenced systems (cameras, UI panels, player scripts) in `RefHub` so multiple consumers pull from the same source. Easy swap, no lost references. Not for gameplay interactions between runtime entities (NPC↔player) — those use find-by-tag/type at runtime.
 - **Script controls initial active state** — Objects that must be active/inactive when the game starts should be set via script (`Awake`/`Start`), not by the GameObject's active toggle in the scene. This lets you toggle GOs on/off while working in the editor without breaking the game's initial state.
+- **Available patterns in .claude/teams/game-dev/*.md** — animation(frame-rate, FBX, clip extraction), systems(InputAction HTML-escape, Canvas coords, Awake/Start), prefabs(edit rules), shaders(texel size, Sobel), tools(editor scripts), blind-spots(AI limits)
 
 ## Learning Protocol
 

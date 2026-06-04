@@ -7,7 +7,8 @@
       {"command": "bash .claude/hooks/stop.sh"}
     ],
     "UserPromptSubmit": [
-      {"command": "bash .claude/hooks/user-prompt-submit.sh"}
+      {"command": "bash .claude/hooks/user-prompt-submit.sh"},
+      {"command": "bash .claude/hooks/post-compaction.sh"}
     ],
     "PreToolUse": [
       {

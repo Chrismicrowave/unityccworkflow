@@ -20,6 +20,21 @@ if [ -f "Library/AgentMirror/SceneMirror.meta.json" ]; then
   echo ""
 fi
 
+# Pattern index — available knowledge files injected here so Claude always knows what exists
+echo "## Available patterns (read on demand from .claude/teams/game-dev/*.md)"
+echo ""
+echo "  | File | Key patterns |"
+echo "  |------|-------------|"
+echo "  | \`animation.md\` | Spider-Verse frame-rate, Mixamo FBX import, clip end detection, RootT.y binding, per-state FPS override, FBX clip extraction"
+echo "  | \`cinemachine.md\` | CM3 Follow/LookAt properties, priority takeover, MCP set_property limits"
+echo "  | \`prefabs.md\` | Never unpack, non-destructive overrides, asset modification"
+echo "  | \`shaders.md\` | Texel size (never _ScreenParams), Sobel kernel, noise wiggle, FPS quantization"
+echo "  | \`systems.md\` | InputAction HTML-escape fix, Canvas↔world conversion, Awake/Start/OnEnable discipline"
+echo "  | \`tools.md\` | Editor scripts, custom inspectors, build pipelines"
+echo "  | \`blind-spots.md\` | Known AI limitations — read before debugging"
+echo "  | \`monobehaviour-lifecycle.md\` | Execution order, message timing, coroutine edge cases"
+echo ""
+
 # CorrectionLedger
 if [ -f "Library/AgentMirror/CorrectionLedger.md" ]; then
   echo "## Prior corrections (read carefully)"
@@ -39,6 +54,9 @@ if [ -f "Library/AgentMirror/RefactorEvent.json" ]; then
     fi
   fi
 fi
+
+# Write throttle timestamp (for post-compaction.sh)
+echo "$(date +%s)" > "Library/AgentMirror/.last-session-inject"
 
 # Log to HookAudit
 mkdir -p Library/AgentMirror

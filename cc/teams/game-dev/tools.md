@@ -169,3 +169,25 @@ Key points:
 - `AddObjectToAsset` makes the feature a sub-asset of the renderer data
 - `fetchColorBuffer` must be true for the shader to receive `_BlitTexture`
 - `requirements = Normal` requests depth + normal textures from the pipeline
+
+## Stop Play mode before scene edits
+
+Changes made during Play Mode are discarded when Play Mode stops. Always check the Play Mode state before calling MCP tools that modify scene objects.
+
+**Pattern:**
+1. Call `get_unity_editor_state` and check the `playMode` field
+2. If `playMode` is true, call `stop_game` first
+3. Then proceed with scene edits
+
+**Why:** Unity discards all runtime modifications when exiting Play Mode. If you add a component, move a GameObject, or change a serialized property during Play Mode, it's gone the moment the user stops the game. This includes MCP tool calls — `add_component`, `set_property`, `set_transform`, etc. all write to the scene's in-memory state which doesn't persist past Play Mode.
+
+## Save scene before MCP hierarchy search
+
+Before calling MCP tools that search the scene hierarchy (`list_game_objects_in_hierarchy`, `get_game_object_info`), save the scene first. Unsaved edits don't exist on disk and won't be found by hierarchy searches.
+
+**Why:** MCP tools that query the scene hierarchy read from the serialized scene on disk, not the in-memory editor state. If you've made changes (added objects, modified components) since the last save, those changes are invisible to MCP searches. The search returns stale or incomplete results, leading to incorrect paths or missing objects.
+
+**Pattern:**
+- Before any hierarchy search call, save via `save_scene`
+- Check for compilation errors first (save during compilation may fail)
+- If using `set_property` to wire a new reference, you can skip re-saving — the object path is known from context and the property write triggers its own serialization

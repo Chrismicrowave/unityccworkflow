@@ -131,3 +131,75 @@ Vector2 vpMax = new Vector2(
     Mathf.Max(screenBL.y, screenTR.y) / Screen.height
 );
 ```
+
+## Editor values beat script defaults
+
+For any `public` or `[SerializeField] private` variable, always check the Unity Editor inspector value. Inspector-configured values are authoritative; script defaults are just fallbacks.
+
+**Why:** Serialized fields in prefabs and scenes override script defaults at edit time. The value shown in the inspector is what actually runs — the script default only applies when a field has never been set in the inspector. Trusting `= 5` in code when the inspector shows `10` is a runtime bug.
+
+**Pattern:**
+1. After adding/changing a serialized field, verify its value via `get_game_object_info` or `Read` on the prefab asset
+2. When in doubt, prefer a nonzero/meaningful inspector default over leaving it as `0`/`null` — you'll catch unwired slots faster
+3. Remember `[Range(0, 1)]` and `Header` attributes don't affect serialization — they only change inspector display
+
+## Always use the new Input System
+
+Use `InputActionAsset` with generated C# wrapper classes. Never poll `Keyboard.current`/`Mouse.current` directly or use legacy `Input.GetKey`.
+
+**Prefer generated wrapper class events** over direct `.inputactions` asset lookups:
+
+```csharp
+// ✅ Good — generated wrapper
+var actions = new InputSystem_Actions();
+actions.Player.Jump.performed += OnJump;
+
+// ❌ Bad — manual asset path lookup (stringly-typed, no compile check)
+var asset = Resources.Load<InputActionAsset>("InputSystem_Actions");
+asset.FindActionMap("Player").FindAction("Jump").performed += OnJump;
+
+// ❌ Worse — legacy input
+if (Input.GetKeyDown(KeyCode.Space)) Jump();
+```
+
+**When bindings don't work:** Check the raw `.inputactions` JSON for HTML-escaped paths (`&lt;Keyboard&gt;` instead of `<Keyboard>`) — see "Input Action Asset debugging" section above.
+
+## Never `??` with Unity Objects
+
+**Always use `if (x == null)` for Unity Objects, never `??` or `?.`.**
+
+Unity overrides the `==` operator on all `UnityEngine.Object` subclasses (GameObject, MonoBehaviour, ScriptableObject, etc.) to implement "fake null." When an object is destroyed, Unity's `==` returns true but the C# managed object still exists — `??` uses C# reference equality and returns the "dead" object reference instead of the fallback.
+
+```csharp
+// ✅ Correct
+if (_target == null) _target = FindFirstObjectByType<MyType>();
+
+// ❌ Bug — fake null bypasses ??
+_target ??= FindFirstObjectByType<MyType>();
+
+// ✅ Correct — avoid ?. when you need null-aware access
+if (_target != null) _target.DoSomething();
+
+// ❌ Bug — ?. works on the live C# ref which isn't null
+_target?.DoSomething();  // executes even on destroyed objects
+```
+
+**Rule of thumb:** If a type inherits from `UnityEngine.Object`, always use `== null`. C# null-conditional operators (`?.`, `??`, `??=`) are only safe on plain C# objects, interface types on MonoBehaviours (cast to interface loses Unity's custom equality), or nullables.
+
+## Script controls initial active state
+
+Objects that must be active/inactive when the game starts should be set via script (`Awake`/`Start`), not by the GameObject's active toggle in the scene.
+
+**Why:**
+- You toggle GOs on/off while working in the editor (to see behind them, isolate objects, etc.)
+- If the initial state is baked into the scene's active toggle, those editor toggles become permanent — save the scene and you've lost the intended start state
+- A script in `Awake()` or `Start()` resets the state reliably at runtime regardless of what you did in the editor
+
+```csharp
+void Awake()
+{
+    gameObject.SetActive(false);  // starts inactive at runtime, but you can toggle in-editor freely
+}
+```
+
+**Exception:** Objects that are purely decorative or never need to be toggled in-editor. Even then, the script approach is zero-cost and future-proof.

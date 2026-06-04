@@ -29,7 +29,7 @@ echo "  | \`animation.md\` | Spider-Verse frame-rate, Mixamo FBX import, clip en
 echo "  | \`cinemachine.md\` | CM3 Follow/LookAt properties, priority takeover, MCP set_property limits"
 echo "  | \`prefabs.md\` | Never unpack, non-destructive overrides, asset modification"
 echo "  | \`shaders.md\` | Texel size (never _ScreenParams), Sobel kernel, noise wiggle, FPS quantization"
-echo "  | \`systems.md\` | InputAction HTML-escape fix, Canvas↔world conversion, Awake/Start/OnEnable discipline, no name-based lookups"
+echo "  | \`systems.md\` | InputAction HTML-escape fix, Canvas↔world conversion, Awake/Start/OnEnable discipline, no name-based lookups, editor-vs-script values, new input system, no ?? on Unity Objs, script-active-state"
 echo "  | \`tools.md\` | Editor scripts, custom inspectors, build pipelines, wire refs via MCP"
 echo "  | \`blind-spots.md\` | Known AI limitations — read before debugging"
 echo "  | \`monobehaviour-lifecycle.md\` | Execution order, message timing, coroutine edge cases"

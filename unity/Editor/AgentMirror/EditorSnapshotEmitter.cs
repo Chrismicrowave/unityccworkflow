@@ -97,7 +97,7 @@ public static class EditorSnapshotEmitter
     {
         if (!_dirty) return;
         double now = EditorApplication.timeSinceStartup;
-        if (now - _lastEmit < 2.0) return; // 2s debounce for quick serial edits
+        if (now - _lastEmit < 0.1) return; // 100ms debounce
         _lastEmit = now;
         _dirty = false;
         EmitScenesOnly(); // auto-watch: scenes only, no prefabs

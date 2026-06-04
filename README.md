@@ -131,6 +131,25 @@ All AnimatorControllers in the project — layers, states, transitions, paramete
 | `CorrectionLedger.md` | User corrections — injected at session start | session stop hook |
 | `HookAudit.jsonl` | Hook fire log | every hook execution |
 
+## Hooks Reference
+
+All hooks live in `.claude/hooks/`. They enforce the UnitySnapshot workflow — block MCP reads with snapshot equivalents, guard writes against Play Mode and field overwrites.
+
+| Hook | Triggers on | Action | Disable |
+|------|------------|--------|---------|
+| `pre-snapshot-read-guard` | `get_game_object_info`, `list_game_objects`, `list_files`, `Glob` | ❌ Blocks — use EditorSnapshot / SceneTreeSnapshot / FolderSnapshot instead | `/unity-rule-off pre-snapshot-read-guard` |
+| `pre-tool-use-write-guard` | `set_property`, `add_component`, scene edits | ❌ Blocks if Play Mode. ⚠️ Warns if EditorSnapshot stale or field mismatch. 💾 Saves scene via SceneSaver signal. | `/unity-rule-off pre-tool-use-write-guard` |
+| `pre-git-commit-guard` | Any Bash command | ❌ Blocks if Play Mode (git commit). ⚠️ Warns if scene mirror stale. | `/unity-rule-off pre-tool-use-write-guard` |
+| `pre-commit` | Git commit (via `.git/hooks/pre-commit`) | ❌ Blocks if Play Mode | Edit `.git/hooks/pre-commit` |
+| `session-start` | Claude session start | Injects ProjectDigest + snapshot status. Generates initial snapshots if missing. | `/unity-rule-off session-start-injection` |
+| `post-compaction` | After CC context compaction | Re-injects context | `/unity-rule-off post-compaction-reinject` |
+| `post-edit-script` | After `.cs` write/edit | Triggers Unity compile | Edit `.claude/unity-mode.json` |
+| `post-suggest-auto-commit` | After any MCP tool | Suggests git commit | `/unity-rule-off post-suggest-auto-commit` |
+| `stop` | Claude session stop | Session digest + correction ledger | — |
+| `user-prompt-submit` | User submits a prompt | Intent-change detection + SceneTreeSnapshot name injection | `/unity-rule-off user-prompt-submit-injection` |
+
+To disable a hook temporarily: `/unity-rule-off <rule-name>` or edit `.claude/unity-mode.json`.
+
 ## UCC Workflow
 
 UCCPack syncs between three locations:

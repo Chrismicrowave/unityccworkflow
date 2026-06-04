@@ -1,0 +1,45 @@
+{
+  "mcpServers": {
+    "codegraph": {
+      "type": "stdio",
+      "command": "codegraph",
+      "args": ["serve", "--mcp"]
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {"command": "bash .claude/hooks/session-start.sh"}
+    ],
+    "Stop": [
+      {"command": "bash .claude/hooks/stop.sh"}
+    ],
+    "UserPromptSubmit": [
+      {"command": "bash .claude/hooks/user-prompt-submit.sh"},
+      {"command": "bash .claude/hooks/post-compaction.sh"}
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "mcp__coplay-mcp__get_game_object_info|mcp__coplay-mcp__list_game_objects_in_hierarchy|mcp__coplay-mcp__list_all_prefabs|mcp__coplay-mcp__list_files|^Glob$",
+        "command": "bash .claude/hooks/pre-snapshot-read-guard.sh"
+      },
+      {
+        "matcher": "mcp__coplay-mcp__set_property|mcp__coplay-mcp__set_transform|mcp__coplay-mcp__set_rect_transform|mcp__coplay-mcp__add_component|mcp__coplay-mcp__remove_component|mcp__coplay-mcp__execute_script|mcp__coplay-mcp__create_game_object|mcp__coplay-mcp__delete_game_object|mcp__coplay-mcp__duplicate_game_object|mcp__coplay-mcp__parent_game_object|mcp__coplay-mcp__rename_game_object|mcp__coplay-mcp__set_layer|mcp__coplay-mcp__set_tag|mcp__coplay-mcp__assign_material|mcp__coplay-mcp__set_ui_text|mcp__coplay-mcp__set_ui_layout|mcp__coplay-mcp__set_animation_curves|mcp__coplay-mcp__modify_animator_controller",
+        "command": "bash .claude/hooks/pre-tool-use-write-guard.sh"
+      },
+      {
+        "matcher": "Bash",
+        "command": "bash .claude/hooks/pre-git-commit-guard.sh"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "write|edit",
+        "command": "bash .claude/hooks/post-edit-script.sh"
+      },
+      {
+        "matcher": ".*",
+        "command": "bash .claude/hooks/post-suggest-auto-commit.sh"
+      }
+    ]
+  }
+}

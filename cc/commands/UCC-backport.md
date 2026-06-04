@@ -59,7 +59,9 @@ UCC-update    →  sync pack → project
    - Or backport all / skip all
    - Use plain text — do not use AskUserQuestion tool
 
-4. **Backport approved files** — Copy approved files from project → pack source path. For settings.json, extract only the `"hooks"` section. For CLAUDE.md, extract only the Code Rules section.
+4. **Sync hooks registry in README** — After backporting hook files, check if `cc/hooks/` has any files not listed in `README.md`'s hooks table (or listed but no longer present). If out of sync, update the table to match actual hook files. This keeps the registry accurate.
+
+5. **Backport approved files** — Copy approved files from project → pack source path. For settings.json, extract only the `"hooks"` section. For CLAUDE.md, extract only the Code Rules section.
 
 5. **Commit in pack dir** — `git add -A && git commit -m "backport: $(basename $(git rev-parse --show-toplevel 2>/dev/null || echo 'project')) — $(date +%Y-%m-%d)"`
 

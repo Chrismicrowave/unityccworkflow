@@ -6,7 +6,7 @@ A solution pack that adds a determinism layer between Claude Code and Unity MCP.
 
 - **AgentMirror** — Unity Editor module that auto-emits JSON artifacts to `Library/AgentMirror/` on every scene/prefab/script change. CC reads these instead of making live MCP calls.
 - **StableId** — GUID-per-GameObject that survives rename and reparent. Ends name-based addressing errors.
-- **CC hooks** — 8 bash scripts (session-start, stop, user-prompt-submit, pre-list-hierarchy, pre-set-property, post-edit-script, post-compaction, pre-commit) that enforce discipline and inject context automatically.
+- **CC hooks** — 10 bash scripts enforcing Play Mode guard, scene saving, snapshot reads, git checks, and session injection.
 - **unity-mcp-discipline skill** — 9 in-context rules covering compile discipline, orientation, identity, CHALLENGE/AMEND flow, play-mode guard, and Animator debugging.
 - **Master toggle** — `unity-mode.json` with per-rule enable/disable. `/unity-on`, `/unity-off`, `/unity-rule-off <rule>` slash commands.
 - **DESIGN.md contract** — Template for human-authored intent. CHALLENGE fires when a `locked` or `settled` section would be violated. AMEND fires on intent-change signals.
@@ -48,11 +48,16 @@ unityccworkflow/
 │   │   ├── session-start.sh            — inject ProjectDigest + SceneTreeSnapshot + CorrectionLedger
 │   │   ├── stop.sh                     — session digest + CorrectionLedger append
 │   │   ├── user-prompt-submit.sh       — intent-change detection + SceneTreeSnapshot name injection
-│   │   ├── post-edit-script.sh         — compile-once signal after .cs edit
-│   │   ├── pre-list-hierarchy.sh       — rate-limit MCP hierarchy calls when mirror is fresh
-│   │   ├── pre-set-property.sh         — playmode guard + stableId reminder
 │   │   ├── post-compaction.sh          — re-inject context after CC compaction
-│   │   └── pre-commit.sh              — nudge when behavior scripts change without DESIGN.md
+│   │   ├── post-edit-script.sh         — compile-once signal after .cs edit
+│   │   ├── post-suggest-auto-commit.sh — nudge to commit after edits
+│   │   ├── pre-commit.sh              — Play Mode guard + design nudge
+│   │   ├── pre-git-commit-guard.sh    — block git during Play Mode
+│   │   ├── pre-snapshot-read-guard.sh — blocks scene-read MCP, forces snapshot use
+│   │   ├── pre-tool-use-write-guard.sh — Play Mode guard + scene save + EditorSnapshot diff
+│   │   ├── session-start.sh            — inject ProjectDigest + SceneTreeSnapshot + CorrectionLedger
+│   │   ├── stop.sh                     — session digest + CorrectionLedger append
+│   │   └── user-prompt-submit.sh       — intent-change detection + SceneTreeSnapshot name injection
 │   ├── skills/unity-mcp-discipline/
 │   │   └── skill.md                   — 9 in-context rules + CHALLENGE/AMEND flows
 │   ├── commands/

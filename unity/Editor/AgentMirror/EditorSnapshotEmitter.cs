@@ -193,25 +193,30 @@ public static class EditorSnapshotEmitter
         {
             if (comp == null || comp is Transform) continue;
 
-            var compEntry = new ComponentEntry { type = comp.GetType().Name };
-            var so = new SerializedObject(comp);
-            var prop = so.GetIterator();
-            while (prop.NextVisible(true))
+            try
             {
-                if (prop.name == "m_Script") continue; // always a script reference, noise
-                // Use the full property path (handles nested structs like OutputChannel.Index)
-                // Strip the root component prefix to keep it readable
-                string fieldName = prop.propertyPath;
-                var field = CaptureField(prop);
-                if (field != null)
+                var compEntry = new ComponentEntry { type = comp.GetType().Name };
+                var so = new SerializedObject(comp);
+                var prop = so.GetIterator();
+                while (prop.NextVisible(true))
                 {
-                    field.name = fieldName; // override with full path
-                    compEntry.fields.Add(field);
+                    if (prop.name == "m_Script") continue;
+                    string fieldName = prop.propertyPath;
+                    var field = CaptureField(prop);
+                    if (field != null)
+                    {
+                        field.name = fieldName;
+                        compEntry.fields.Add(field);
+                    }
                 }
-            }
 
-            if (compEntry.fields.Count > 0 || ShouldShowEmptyComponent(comp))
-                entry.components.Add(compEntry);
+                if (compEntry.fields.Count > 0 || ShouldShowEmptyComponent(comp))
+                    entry.components.Add(compEntry);
+            }
+            catch
+            {
+                // Skip components that fail to serialize (e.g., corrupted prefabs)
+            }
         }
 
         data.entities.Add(entry);

@@ -38,17 +38,17 @@ public static class StableIdBootstrap
     [MenuItem("Tools/AgentMirror/Add StableId to selection (recursive)", validate = true)]
     static bool ValidateAddToSelection() => Selection.gameObjects.Length > 0;
 
-    [MenuItem("Tools/AgentMirror/Regenerate all mirrors")]
+    [MenuItem("Tools/AgentMirror/Regenerate all snapshots")]
     static void RegenerateAll()
     {
-        // Trigger all emitters by simulating a hierarchy change.
-        // Each emitter listens to EditorApplication.hierarchyChanged or runs its own full scan.
+        EditorSnapshotEmitter.EmitNow();
+        FolderSnapshotEmitter.EmitNow();
         SceneMirrorEmitter.EmitNow();
-        AsmdefGraphEmitter.EmitNow();
         AnimatorsSnapshotEmitter.EmitNow();
+        AsmdefGraphEmitter.EmitNow();
         ProjectDigestEmitter.EmitNow();
         PrefabGraphEmitter.EmitNow();
         InspectorRefsEmitter.EmitNow();
-        Debug.Log("[AgentMirror] All mirrors regenerated.");
+        Debug.Log("[AgentMirror] All snapshots regenerated.");
     }
 }

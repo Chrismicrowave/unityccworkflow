@@ -89,6 +89,56 @@ unityccworkflow/
 | `CorrectionLedger.md` | User corrections — injected at session start | session stop hook |
 | `HookAudit.jsonl` | Hook fire log | every hook execution |
 
+## UCC Workflow
+
+UCCPack syncs between three locations:
+
+```
+Project (.claude/, Assets/)  ←→  Local Pack (D:/.../UnityCCWorkflow/)  ←→  GitHub
+```
+
+| What | Project path | Pack source | Sync |
+|------|-------------|-------------|:---:|
+| Hook scripts | `.claude/hooks/` | `cc/hooks/` | ↔️ |
+| UCC commands | `.claude/commands/UCC-*.md` | `cc/commands/UCC-*.md` | ↔️ |
+| Skills | `.claude/skills/unity-mcp-discipline/` | `cc/skills/unity-mcp-discipline/` | ↔️ |
+| Editor tools | `Assets/Editor/AgentMirror/` | `unity/Editor/AgentMirror/` | ↔️ |
+| StableId | `Assets/Scripts/Core/StableId.cs` | `unity/Runtime/StableId.cs` | ↔️ |
+| Hook matchers | `.claude/settings.json` (hooks) | `cc/settings.json.pack` | → project→pack |
+| Code Rules | `CLAUDE.md` (rules section) | `templates/CLAUDE.md.template` | ↔️ |
+| Domain patterns | `.claude/teams/game-dev/*.md` | `cc/teams/game-dev/*.md` | → project→pack |
+
+### Typical flow
+
+```
+after a session → UCC-learn → UCC-backport → UCC-push → UCC-update
+```
+
+### Flow explained
+
+```
+┌─────────────┐    captures knowledge to CLAUDE.md, domain files
+│  UCC-learn  │    suggests: then run UCC-backport
+└─────────────┘
+      │
+      ▼
+┌───────────────┐  reviews divergences on all tracked paths
+│  UCC-backport │  asks approval per file
+│               │  copies approved files project → local pack
+└───────────────┘
+      │
+      ▼
+┌───────────┐    auto-runs UCC-backport first
+│  UCC-push │    versions, tags, pushes local pack → GitHub
+└───────────┘
+      │
+      ▼
+┌─────────────┐  pulls latest pack from GitHub
+│  UCC-update │  checks for divergences
+│             │  syncs pack → project
+└─────────────┘
+```
+
 ## Slash commands
 
 | Command | Action |
@@ -101,8 +151,11 @@ unityccworkflow/
 | `/unity-rule-status` | List all rules with N/9 count |
 | `/unity-rule-reset` | Reset all rules to enabled |
 | `/unityccworkflow-init` | Init pack from inside CC session |
-| `/UCC-update` | Pull latest pack from GitHub and sync files into project |
-| `/UCC-push` | Commit local pack changes, bump version, push to GitHub |
+| `/UCC-learn` | Extract session learnings, suggest backport+push |
+| `/UCC-backport` | Review divergences → copy project→local pack |
+| `/UCC-push` | Auto-backport, then version + tag + push to GitHub |
+| `/UCC-update` | Pull latest pack, check divergences, sync→project |
+| `/UCC-edit` | *(mostly superseded by backport)* Edit both project+pack |
 
 ## What is NOT overwritten by re-running init
 

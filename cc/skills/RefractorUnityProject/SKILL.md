@@ -102,6 +102,67 @@ Spawn an `Explore` subagent (thoroughness: very thorough) to survey:
 - Scene hierarchy
 - Existing docs (architecture.md, CLAUDE.md)
 
+### Step 3b — Clean Up (Pre-Refactor Housekeeping)
+
+**Purpose**: Remove obvious clutter BEFORE the detailed refactor plan, so the plan deals with real code, not trash. Do this directly on the branch — no sub-agents needed for simple scans.
+
+1. **Check for dead imports** — in each `.cs` file, look for unused `using` statements (e.g. `using UnityEngine.UI;` with no UI code). Remove them.
+
+2. **Check for dead code** — grep for:
+   - `// TODO:` — flag to user, don't remove without asking (might be planned work)
+   - `// Debug.Log` commented out — remove commented-out debug lines
+   - Empty `Update()` / `Start()` / `Awake()` methods — delete
+   - Files with `// AssetStoreTools` or `// Asset Store` in header — flag, these are third-party
+
+3. **Check for tool-generated stubs** — look for:
+   - Empty `#region` blocks — remove
+   - Auto-generated XML comments that just say `/// <summary>` with nothing useful — remove
+   - Files named `NewBehaviourScript` or `NewSurfaceShader` — likely unrenamed stubs, flag
+
+4. **Report results** — list what was cleaned and what was flagged for user review. Present before committing:
+   > "Cleaned: [N] unused imports, [N] empty methods. Flagged [N] TODOs for review."
+   Wait for user confirmation before committing the cleanup.
+
+5. **Commit cleanup** — `git add -A && git commit -m "refactor(cleanup): remove dead imports, empty methods, stubs"`
+
+### Step 3c — Organize Suggestions
+
+**Purpose**: Propose folder, asset, and scene hierarchy improvements based on the Analyse survey. Present as recommendations — the user decides what to act on.
+
+1. **Asset folder review** — check against standard Unity conventions:
+   ```
+   Sprites/  (was Image/, Textures/)
+   Audio/    (was Sound/)
+   Fonts/    (was Font/)
+   Materials/  (all .mat files in one place)
+   Shaders/    (at root, not nested under Scripts/)
+   Settings/   (pipeline assets, ScriptableObjects)
+   Prefabs/    (all .prefab files)
+   Scripts/    (code, organized by system)
+   ```
+   Flag any stray files in wrong folders, inconsistent naming (mix of `snake_case`, `PascalCase`, `kebab-case`), and duplicate assets.
+
+2. **Scene hierarchy review** — check for:
+   - Root-level GameObjects with vague names (`GameObject`, `Cube`, `New Game Object`)
+   - Missing or inconsistent tags/layers
+   - Deeply nested empty GameObjects that could be flattened
+   - Objects at world origin (0,0,0) that shouldn't be
+
+3. **File naming audit** — check for consistency:
+   - Scripts: should match class name (`PlayerController.cs` → class `PlayerController`)
+   - Prefabs: consistent prefix/suffix if used
+   - Textures: `object_purpose_resolution` pattern (`player_icon_256`, `bg_sky_2k`)
+
+4. **Present suggestions** as a structured report grouped by area (Folders / Scene / Naming). Mark each as:
+   - 🟢 **Safe** — can auto-apply (e.g. renaming a folder, moving a file with its .meta)
+   - 🟡 **Needs check** — may affect references (e.g. moving a material used in many scenes)
+   - 🔴 **Flag** — confirm with user (e.g. merging two similar folders, deleting a "duplicate")
+
+   Wait for user approval before implementing any suggestions.
+
+5. **If approved**, execute moves using the Asset Move Protocol (see Critical Lessons). Commit after each batch:
+   `git commit -m "refactor(organize): <description>"`
+
 ### Step 4 — Plan
 Use `superpowers:writing-plans` to produce a staged refactor plan. Append to `docs/refractor-plan.md` (after the gameplay understanding from Step 1). Plan must include:
 - Numbered stages with clear scope per stage

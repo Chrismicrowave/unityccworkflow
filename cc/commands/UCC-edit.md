@@ -1,10 +1,12 @@
 # UCC-edit
 
+**Note: Mostly superseded by `UCC-backport`** — if you already edited the file in the project, just run `UCC-backport` to capture it. UCC-edit is only needed when you want to edit the project and pack versions in lockstep simultaneously.
+
 Edit a UCC-pack-managed file in **both** the project `.claude/` copy AND the local pack source simultaneously. Never risk one falling behind the other.
 
 ## When to use
 
-Run this command whenever you're about to edit a file that exists in both the project and the local pack. This covers all synced paths:
+Run this when you're about to edit a file you know exists in both the project and the local pack, and want both updated at the same moment. This covers all synced paths:
 
 | Project path | Pack source path |
 |---|---|

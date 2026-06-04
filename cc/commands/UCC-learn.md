@@ -34,21 +34,16 @@ Extract patterns and project knowledge from the current Unity project and backpo
    - If a learning goes to a domain file AND CLAUDE.md, add a one-liner pointer in CLAUDE.md and full detail in the domain file
    - Wait for user confirmation before writing.
 
-5. **Backport domain files to pack** — Copy updated `.claude/teams/game-dev/{domain}.md` files to `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\cc\teams\game-dev\{domain}.md` so future projects get the patterns.
-
-5b. **Backport CLAUDE.md template to pack** — Read the project's `CLAUDE.md` and the pack's `templates/CLAUDE.md.template`. Identify any Code Rules in the project that are general (not project-specific) and missing from the template. Present and ask:
-    > "These [N] rules in your CLAUDE.md aren't in the pack template. Are they general enough that all Unity projects should get them? Backport to pack template?"
-    - If yes: add each rule as a new bullet in the template's Code Rules section, then report
-    - If no: mark it as project-specific and suggest moving it to `Assets/Docs/ProjectKnow/` instead
-
-    **How to distinguish general vs project-specific:**
-    | General (backport) | Project-specific (skip) |
-    |---|---|
-    | "Never `??` with Unity Objects" | "FrameRateSampler: animator.speed = 0" |
-    | "Always use the new Input System" | "Our custom EventBus dispatch pattern" |
-    | "Wire references via MCP, never ask" | "Use StrokeSnap-specific brush API" |
-    | Unity engine rules | Project architecture conventions |
-    | MCP/workflow discipline | Prototype-specific gotchas |
+5. **Auto-backport to pack** — Always backport without asking:
+   - Copy updated `.claude/teams/game-dev/{domain}.md` → `cc/teams/game-dev/{domain}.md`
+   - Push new/changed Code Rules from `CLAUDE.md` → `templates/CLAUDE.md.template`
+   - Distinguish general vs project-specific rules:
+     | General (backport) | Project-specific (skip) |
+     |---|---|
+     | "Never `??` with Unity Objects" | "FrameRateSampler: animator.speed = 0" |
+     | "Always use the new Input System" | "Our custom EventBus dispatch pattern" |
+     | Unity engine rules | Project architecture conventions |
+     | MCP/workflow discipline | Prototype-specific gotchas |
 
 6. **Report** — Summarise:
    - Which files were updated/created

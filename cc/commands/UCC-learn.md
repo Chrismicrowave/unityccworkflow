@@ -34,19 +34,13 @@ Extract patterns and project knowledge from the current Unity project and backpo
    - If a learning goes to a domain file AND CLAUDE.md, add a one-liner pointer in CLAUDE.md and full detail in the domain file
    - Wait for user confirmation before writing.
 
-5. **Auto-backport to pack** — Always backport without asking:
-   - Copy updated `.claude/teams/game-dev/{domain}.md` → `cc/teams/game-dev/{domain}.md`
-   - Push new/changed Code Rules from `CLAUDE.md` → `templates/CLAUDE.md.template`
-   - Distinguish general vs project-specific rules:
-     | General (backport) | Project-specific (skip) |
-     |---|---|
-     | "Never `??` with Unity Objects" | "FrameRateSampler: animator.speed = 0" |
-     | "Always use the new Input System" | "Our custom EventBus dispatch pattern" |
-     | Unity engine rules | Project architecture conventions |
-     | MCP/workflow discipline | Prototype-specific gotchas |
+5. **Backport template rules** — If new general Code Rules were added to `CLAUDE.md`, copy them to `templates/CLAUDE.md.template`. Distinguish general vs project-specific:
+   | General (backport) | Project-specific (skip) |
+   |---|---|
+   | "Never `??` with Unity Objects" | "FrameRateSampler: animator.speed = 0" |
+   | "Always use the new Input System" | "Our custom EventBus dispatch pattern" |
+   | Unity engine rules | Project architecture conventions |
+   | MCP/workflow discipline | Prototype-specific gotchas |
 
-6. **Report** — Summarise:
-   - Which files were updated/created
-   - What was learned
-   - Which new rules were added to the pack template (if any)
-   - Which domain files were backported
+6. **Suggest UCC-backport + UCC-push** — After saving learnings, prompt:
+   > "Learnings saved. Run `UCC-backport` to sync file changes to the pack, then `UCC-push` to release?"

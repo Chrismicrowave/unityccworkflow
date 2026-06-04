@@ -90,3 +90,19 @@ float GetTargetFPS() {
 ```
 
 Useful for making action animations read at a different rate than locomotion.
+
+## Extracting Animation Clips from FBX
+
+Use `EditorUtility.CopySerialized` to copy named clips from the FBX sub-assets into standalone `.anim` files:
+
+```csharp
+// Example pattern — load FBX, copy clip, save as .anim
+string[] clipNames = { "Breathing Idle", "Walking", ... };
+foreach (var name in clipNames) {
+    var clip = GetSubAsset<AnimationClip>(fbxPath, name);
+    var copy = UnityEngine.Object.Instantiate(clip);
+    AssetDatabase.CreateAsset(copy, $"Assets/Anim/{name}.anim");
+}
+```
+
+After re-importing the FBX with changed settings, re-extract — the `.anim` files are snapshots of the import's baked data.

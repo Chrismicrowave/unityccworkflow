@@ -51,7 +51,9 @@ public static class FolderSnapshotEmitter
 
     static FolderSnapshotEmitter()
     {
-        EditorApplication.delayCall += () => MarkDirty(5.0); // 5s after launch
+        if (!System.IO.File.Exists(AgentMirrorConfig.FolderSnapshotPath)) return;
+
+        EditorApplication.delayCall += () => MarkDirty(5.0);
         EditorApplication.update += PollEmit;
     }
 

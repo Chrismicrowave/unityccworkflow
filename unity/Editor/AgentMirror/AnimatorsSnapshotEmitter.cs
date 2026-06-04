@@ -14,6 +14,8 @@ public static class AnimatorsSnapshotEmitter
 {
     static AnimatorsSnapshotEmitter()
     {
+        if (!System.IO.File.Exists(AgentMirrorConfig.AnimatorsSnapshotPath)) return;
+
         EditorApplication.delayCall += EmitNow;
     }
 

@@ -20,9 +20,11 @@ public static class SceneMirrorEmitter
 
     static SceneMirrorEmitter()
     {
+        if (!System.IO.File.Exists(AgentMirrorConfig.SceneTreeSnapshotPath)) return;
+
         EditorApplication.hierarchyChanged        += OnHierarchyChanged;
         PrefabUtility.prefabInstanceUpdated       += OnPrefabInstanceUpdated;
-        EditorApplication.delayCall              += EmitNow; // emit once on load
+        EditorApplication.delayCall              += EmitNow;
     }
 
     private static void OnHierarchyChanged()

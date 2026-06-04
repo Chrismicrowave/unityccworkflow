@@ -73,19 +73,61 @@ unityccworkflow/
 └── README.md
 ```
 
-## Artifacts emitted to Library/AgentMirror/
+## UnitySnapshot — AI Scene Mirror
+
+UCCPack mirrors Unity's three native domains into snapshot files under `Library/AgentMirror/`. The AI reads these instead of making live MCP calls — saving round-trips, token cost, and ensuring it always works from the last saved state.
+
+### Domain 1: UnitySnapshot — Live Scene (GameObjects + Components + Fields)
+
+**File:** `Library/AgentMirror/UnitySnapshot.json`
+
+Every GameObject in every open scene (and all prefab assets), with:
+- StableId, name, hierarchy path
+- All components with all serialized field values (primitives, enums, vectors, colors, object references resolved to StableId)
+- Nested structs captured via full property path (e.g. `m_OutputChannel.Index`, `HorizontalAxis.Value`)
+- Component count per GO, reference index (who references who)
+
+**Triggers:** hierarchy change, component edit, undo/redo, prefab import — auto-re-emits within 2s.
+
+**Token strategy:** ~2MB raw. Not loaded by default. The AI requests it on-demand when it needs field-level data (before writes, when debugging a specific component).
+
+### Domain 2: SceneMirror — Hierarchy Tree
+
+**File:** `Library/AgentMirror/SceneMirror.json`
+
+Lightweight hierarchy tree only — every GO's path, name, StableId, and component list. No field values.
+
+~50KB vs UnitySnapshot's ~2MB. The AI reads this by default for hierarchy queries (90% of scene reads). Only escalates to UnitySnapshot when field values are needed.
+
+### Domain 3: FolderSnapshot — Asset Tree
+
+**File:** `Library/AgentMirror/FolderSnapshot.json`
+
+Complete recursive scan of `Assets/` — every file and folder with:
+- Path, name, extension, size, last modified
+- Category (script, scene, prefab, shader, image, audio, model, text, asset)
+- Folder child counts
+
+**Triggers:** asset import, delete, move — auto-re-emits within 3s via `AssetPostprocessor`.
+
+Replaces `list_files`/`Glob`/`search_files` MCP calls.
+
+### Domain 4: AnimatorDump — Animation Controllers
+
+**File:** `Library/AgentMirror/AnimatorDump.json`
+
+All AnimatorControllers in the project — layers, states, transitions, parameters, conditions. Separate because animation is a distinct domain with a complex schema that would bloat UnitySnapshot.
+
+### Other Artifacts
 
 | File | Contents | When updated |
 |------|----------|-------------|
-| `SceneMirror.json` | All GameObjects: stableId, name, path, kind, components | hierarchy change, prefab import |
-| `SceneMirror.meta.json` | entityCount, sceneCount, emittedAt | same |
 | `AsmdefGraph.json` | Assembly names, file lists, references | .asmdef import |
-| `AnimatorDump.json` | All controllers: layers, states, transitions, parameters | .controller import |
 | `ProjectDigest.md` | git log, changed files, uncommitted, last session | Unity editor launch |
 | `RefactorEvent.json` | Mass-rename/reparent events (>10 objects) | mass hierarchy change |
-| `PrefabGraph.json` | Prefab assets: instanceCount, variantOf, scenesUsedIn | .prefab import |
+| `PrefabGraph.json` | Prefab instances + variants | .prefab import |
 | `InspectorRefs.json` | UnityEvent wiring: source, target, method | .unity/.prefab import |
-| `SessionLedger.jsonl` | Per-entity modification log | agent edits (via UndoGroupWrapper) |
+| `SessionLedger.jsonl` | Per-entity modification log | agent edits |
 | `CorrectionLedger.md` | User corrections — injected at session start | session stop hook |
 | `HookAudit.jsonl` | Hook fire log | every hook execution |
 

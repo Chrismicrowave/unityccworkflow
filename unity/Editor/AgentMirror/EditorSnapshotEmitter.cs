@@ -105,7 +105,7 @@ public static class EditorSnapshotEmitter
     // ── Public API ──────────────────────────────────────────────────────
 
     /// <summary>Call from menu or hook to force regeneration.</summary>
-    [MenuItem("Tools/AgentMirror/UnitySnapshot/Editor Snapshot")]
+    [MenuItem("Tools/AgentMirror/UnitySnapshot/Editor Snapshot", false, 50)]
     public static void EmitNow()
     {
         try

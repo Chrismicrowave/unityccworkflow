@@ -39,7 +39,7 @@ public static class SceneMirrorEmitter
     public static void OnPrefabImported() => EmitNow();
 
     /// <summary>Full emit — public so StableIdBootstrap can call it on demand.</summary>
-    [MenuItem("Tools/AgentMirror/UnitySnapshot/Scene Tree Snapshot")]
+    [MenuItem("Tools/AgentMirror/UnitySnapshot/Scene Tree Snapshot", false, 51)]
     public static void EmitNow()
     {
         try

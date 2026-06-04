@@ -38,7 +38,7 @@ public static class StableIdBootstrap
     [MenuItem("Tools/AgentMirror/Add StableId to selection (recursive)", validate = true)]
     static bool ValidateAddToSelection() => Selection.gameObjects.Length > 0;
 
-    [MenuItem("Tools/AgentMirror/UnitySnapshot/Generate All")]
+    [MenuItem("Tools/AgentMirror/UnitySnapshot/Generate All", false, 1)]
     static void GenerateAllSnapshots()
     {
         EditorSnapshotEmitter.EmitNow();

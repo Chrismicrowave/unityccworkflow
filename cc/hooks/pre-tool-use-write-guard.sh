@@ -91,9 +91,9 @@ if [ "$IS_WRITE" = "1" ] && [ "$IS_PLAYING" != "true" ]; then
   rm -f "$SIGNAL" "$DONE"
 fi
 
-# ── ComponentRegistry diff check (only for set_property) ────────────
+# ── EditorSnapshot diff check (only for set_property) ────────────
 if [ "$MCP_TOOL" = "mcp__coplay-mcp__set_property" ]; then
-  REGISTRY="Library/AgentMirror/ComponentRegistry.json"
+  REGISTRY="Library/AgentMirror/EditorSnapshot.json"
   if [ -f "$REGISTRY" ]; then
     # Read stdin for tool arguments
     ARGS=$(cat /dev/stdin 2>/dev/null || echo "")

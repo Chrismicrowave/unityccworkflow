@@ -22,12 +22,14 @@ public static class AgentMirrorConfig
     public const string PrefabGraphPath       = "Library/AgentMirror/PrefabGraph.json";
     public const string InspectorRefsPath     = "Library/AgentMirror/InspectorRefs.json";
 
-    // ── v0.5 safety & registry paths ────────────────────────────────────────
+    // ── UnitySnapshot paths ────────────────────────────────────────────────────
     public const string PlayModeStatePath     = "Library/AgentMirror/PlayModeState.json";
     public const string SaveSceneSignalPath   = "Library/AgentMirror/.save-scene-signal";
     public const string SaveSceneDonePath     = "Library/AgentMirror/.save-scene-done";
-    public const string ComponentRegistryPath = "Library/AgentMirror/ComponentRegistry.json";
-    public const string ComponentRegistryMdPath = "Library/AgentMirror/ComponentRegistry.md";
+    public const string EditorSnapshotPath    = "Library/AgentMirror/EditorSnapshot.json";
+    public const string EditorSnapshotMdPath  = "Library/AgentMirror/EditorSnapshot.md";
+    public const string FolderSnapshotPath    = "Library/AgentMirror/FolderSnapshot.json";
+    public const string FolderSnapshotMdPath  = "Library/AgentMirror/FolderSnapshot.md";
 
     // ── Bootstrap ───────────────────────────────────────────────────────────
     static AgentMirrorConfig()

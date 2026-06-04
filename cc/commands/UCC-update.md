@@ -1,79 +1,51 @@
 # UCC-update
 
-Check the project's UCCPack sync status against the upstream repo. Reports divergences, uncommitted changes, and ahead/behind status — then suggests actions to resolve.
+Sync this project with the latest UCCPack. Pulls upstream, captures any local project improvements back to the pack, resolves divergences, and syncs everything.
 
 ## Steps
 
-1. **Auto-accept: always confirm upgrade** — The user invoked this skill, so proceed without asking "are you sure?".
+1. **Auto-accept** — The user invoked this, proceed without confirmation.
 
-2. **Pull latest pack from GitHub** — In the local pack directory (`D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\`):
+2. **Pull latest pack from GitHub** — In `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\`:
    - `git checkout master && git pull origin master`
-   - If pull fails (network, auth), report the error clearly and STOP.
+   - If pull fails (network/auth), report and STOP.
 
-3. **Read project version** — `.claude/pack-version.json`
+3. **Check divergence** — For each synced path pair, check:
+   - **Uncommitted changes** — `git status --short` on project synced paths
+   - **Content divergence** — `git diff --no-index` project ↔ pack
+   - **Ahead/behind** — `git log --oneline HEAD..origin/master && git log --oneline origin/master..HEAD` in pack dir
 
-4. **Read pack version** — `D:\Files\Desktop\Claude\Projects\UnityCCWorkflow\pack-info.json`
+   Synced paths:
+   - `.claude/hooks/` ↔ `cc/hooks/`
+   - `.claude/skills/unity-mcp-discipline/` ↔ `cc/skills/unity-mcp-discipline/`
+   - `.claude/commands/UCC-*.md` ↔ `cc/commands/UCC-*.md`
+   - `Assets/Editor/AgentMirror/` ↔ `unity/Editor/AgentMirror/`
+   - `Assets/Scripts/Core/StableId.cs` ↔ `unity/Runtime/StableId.cs`
 
-5. **Check divergence status** — For each synced path pair, check all three states:
+4. **Auto-resolve** — Handle each state:
 
-   **a. Uncommitted project changes** — `git status --short` on the project paths:
-      - `.claude/hooks/`
-      - `.claude/skills/unity-mcp-discipline/`
-      - `.claude/commands/UCC-*.md`
-      - `Assets/Editor/AgentMirror/`
-      - `Assets/Scripts/Core/StableId.cs`
+   **a. Uncommitted project changes** → commit them in the project (auto-generate message describing what changed).
 
-   **b. Content divergence** — `git diff --no-index` between project file and pack source:
-      - `.claude/hooks/` ↔ `cc/hooks/`
-      - `.claude/skills/unity-mcp-discipline/` ↔ `cc/skills/unity-mcp-discipline/`
-      - `.claude/commands/UCC-*.md` ↔ `cc/commands/UCC-*.md`
-      - `Assets/Editor/AgentMirror/` ↔ `unity/Editor/AgentMirror/`
-      - `Assets/Scripts/Core/StableId.cs` ↔ `unity/Runtime/StableId.cs`
+   **b. Content divergence** → copy changed files **project → pack** (project is the source of truth for its own improvements). Commit in pack dir.
 
-   **c. Ahead / behind UCCPack repo** — In the pack dir:
-      - `git log --oneline HEAD..origin/master` (behind — unpulled remote commits)
-      - `git log --oneline origin/master..HEAD` (ahead — unpushed local commits)
+   **c. Pack ahead of origin** → `git push origin master` in pack dir.
 
-6. **Report results** — Show a clean summary:
-   ```
-   ═══ UCCPack Sync Report ═══
-   Project version: v0.5.1
-   Pack version:    v0.6.0
+   **d. Pack behind origin** → already handled by step 2 pull.
 
-   ── Uncommitted project changes ──
-   M  .claude/hooks/pre-git-commit-guard.sh
+5. **Pull again** — After capturing+committing+ pushing, pull again in case the push changed origin: `git pull origin master`.
 
-   ── Content divergence (project vs pack) ──
-   ✓ .claude/hooks/ — in sync
-   ✗ .claude/commands/UCC-update.md — differs
-
-   ── Pack repo status ──
-   Local master is 1 commit ahead of origin/master
-
-   ── Suggested actions ──
-   1. Uncommitted changes found → commit project first
-   2. Content diverges → run /UCC-push to capture project→pack
-   3. Pack is ahead → run /UCC-update again after push to sync
-   ```
-
-7. **Decision matrix** — Based on the report, take the appropriate action:
-
-   | Uncommitted? | Diverged? | Pack ahead? | Action |
-   |---|---|---|---|
-   | No | No | No | ✅ Already up to date — stop |
-   | No | No | Yes | Proceed with update (sync pack→project) |
-   | Yes | — | — | Suggest: commit project files first |
-   | — | Yes | — | Suggest: run `/UCC-push` to capture to pack |
-   | No | No | Yes | Proceed with update, ask user to confirm |
-   | Mixed | Mixed | Mixed | Suggest: run `/UCC-push` first, then `/UCC-update` again |
-
-8. **If proceeding with update** — Copy files from pack to project:
+6. **Sync to project** — Copy pack files into project:
    - `cc/hooks/` → `.claude/hooks/`
    - `cc/skills/unity-mcp-discipline/` → `.claude/skills/unity-mcp-discipline/`
    - `cc/commands/` → `.claude/commands/`
    - `unity/Editor/AgentMirror/` → `Assets/Editor/AgentMirror/`
    - `unity/Runtime/StableId.cs` → `Assets/Scripts/Core/StableId.cs`
-   - Preserve existing project files that don't exist in the pack.
-   - Update `.claude/pack-version.json` with the new pack version.
+   - Preserve existing project files that don't exist in pack.
 
-9. **Report result** — Show what changed, the new version, and prompt the user to commit.
+7. **Update project version** — Read pack version from `pack-info.json`. Write `.claude/pack-version.json` with version, sourceCommit, installedAt.
+
+8. **Report** — Show:
+   - What was captured from project → pack
+   - What was synced from pack → project
+   - Final versions (pack + project)
+   - Prompt to commit the project changes

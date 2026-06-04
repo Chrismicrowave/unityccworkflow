@@ -1,5 +1,13 @@
 #!/bin/bash
 # session-start.sh — injects project context at session start
+
+# ── jq availability check ──────────────────────────────────────────
+if ! command -v jq &> /dev/null && ! command -v jq.exe &> /dev/null; then
+  echo "⚠️  jq is not installed. UCCPack hooks (Play Mode guard, EditorSnapshot diff,"
+  echo "   pre-commit checks) will not work. Install: winget install jqlang.jq"
+  echo ""
+fi
+
 if [ "$(jq -r .enabled .claude/unity-mode.json 2>/dev/null)" != "true" ]; then exit 0; fi
 if [ "$(jq -r '.rules."session-start-injection"' .claude/unity-mode.json 2>/dev/null)" != "true" ]; then exit 0; fi
 

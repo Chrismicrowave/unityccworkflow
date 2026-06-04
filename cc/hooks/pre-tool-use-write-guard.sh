@@ -91,8 +91,43 @@ if [ "$IS_WRITE" = "1" ] && [ "$IS_PLAYING" != "true" ]; then
   rm -f "$SIGNAL" "$DONE"
 fi
 
-# ── StableId reminder (only for set_property) ────────────────────────
+# ── ComponentRegistry diff check (only for set_property) ────────────
 if [ "$MCP_TOOL" = "mcp__coplay-mcp__set_property" ]; then
+  REGISTRY="Library/AgentMirror/ComponentRegistry.json"
+  if [ -f "$REGISTRY" ]; then
+    # Read stdin for tool arguments
+    ARGS=$(cat /dev/stdin 2>/dev/null || echo "")
+    if [ -n "$ARGS" ]; then
+      # Parse field and value from stdin JSON
+      # stdin format: {"tool":"mcp__coplay-mcp__set_property","args":{"property_name":"...","value":"...","gameobject_path":"...","component_type":"..."}}
+      PROP=$(echo "$ARGS" | jq -r '.args.property_name // .property_name // ""')
+      VAL=$(echo "$ARGS" | jq -r '.args.value // .value // ""')
+      GO_PATH=$(echo "$ARGS" | jq -r '.args.gameobject_path // .gameobject_path // ""')
+      COMP_TYPE=$(echo "$ARGS" | jq -r '.args.component_type // .component_type // ""')
+
+      if [ -n "$PROP" ] && [ -n "$GO_PATH" ]; then
+        # Look up current value in the registry
+        # Match by path (last segment) and component type, then find the field
+        CURRENT=$(jq -r --arg go "$GO_PATH" --arg comp "$COMP_TYPE" --arg prop "$PROP" '
+          .entities[] | select(.path == $go) | .components[] | select(.type == $comp) | .fields[] | select(.name == $prop) | .value
+        ' "$REGISTRY" 2>/dev/null | head -1)
+
+        if [ -n "$CURRENT" ] && [ "$CURRENT" != "$VAL" ] && [ "$CURRENT" != "null" ]; then
+          echo ""
+          echo "⚠️  WARNING: Field '$PROP' on $GO_PATH ($COMP_TYPE)"
+          echo "   Current registry value: $CURRENT"
+          echo "   Incoming write value:   $VAL"
+          echo ""
+          echo "   This field may have been modified in the editor."
+          echo "   Override: /unity-rule-off pre-tool-use-write-guard"
+          echo ""
+          # Soft warning — does not block, just informs
+        fi
+      fi
+    fi
+  fi
+
+  # StableId reminder
   if [ "$(jq -r '.rules."pre-set-property-name-refusal"' "$MODE_JSON" 2>/dev/null)" = "true" ]; then
     echo "HOOK: Resolve target by stableId before set_property."
     echo "       Check Library/AgentMirror/SceneMirror.json for the entity's stableId."

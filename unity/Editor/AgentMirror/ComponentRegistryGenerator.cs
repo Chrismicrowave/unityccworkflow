@@ -37,9 +37,10 @@ public static class ComponentRegistryGenerator
     [Serializable]
     private class EntityEntry
     {
-        public string stableId;
+        public string stableId;      // null if GameObject has no StableId component
         public string name;
         public string path;
+        public int componentCount;   // total components on this GameObject
         public string kind;          // "scene-instance" or "prefab-asset"
         public string scene;         // scene path or prefab asset path
         public List<ComponentEntry> components = new List<ComponentEntry>();
@@ -165,24 +166,27 @@ public static class ComponentRegistryGenerator
 
         string path = string.IsNullOrEmpty(parentPath) ? go.name : $"{parentPath}/{go.name}";
         var stableId = go.GetComponent<StableId>();
-        bool hasStableId = stableId != null && !string.IsNullOrEmpty(stableId?.Id);
+        string stableIdStr = stableId != null ? stableId.Id : null;
 
-        // Always scan children even if this GO lacks a StableId (child may have one)
+        // Walk children first
         foreach (Transform child in go.transform)
             WalkGameObject(child.gameObject, path, sceneOrPrefabPath, kind, data, scanned);
 
-        if (!hasStableId) return;
-
+        // Capture every GameObject — no StableId gate.
         var entry = new EntityEntry
         {
-            stableId = stableId.Id,
+            stableId = stableIdStr,
             name = go.name,
             path = path,
+            componentCount = 0,
             kind = kind,
             scene = sceneOrPrefabPath
         };
 
-        foreach (var comp in go.GetComponents<Component>())
+        var allComponents = go.GetComponents<Component>();
+        entry.componentCount = allComponents.Length;
+
+        foreach (var comp in allComponents)
         {
             if (comp == null || comp is Transform) continue;
 

@@ -83,6 +83,7 @@ public static class EditorSnapshotEmitter
 
     private static bool _dirty;
     private static double _lastEmit;
+    private static bool _skipPrefabScan = true; // skip prefabs on initial load
 
     private static UndoPropertyModification[] OnUndoRedo(UndoPropertyModification[] modifications)
     {
@@ -128,14 +129,19 @@ public static class EditorSnapshotEmitter
                     WalkGameObject(root, "", scene.path, "scene-instance", data, scannedGo);
             }
 
-            // ── Scan prefabs ──────────────────────────────────────────────
-            var prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
-            foreach (var guid in prefabGuids)
+            // ── Scan prefabs (skip on initial load to avoid startup hang) ─
+            // Full prefab scan runs on asset import or manual "Generate All".
+            // The _skipPrefabScan flag is set false after first successful emit.
+            if (!_skipPrefabScan)
             {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                if (prefab == null) continue;
-                WalkGameObject(prefab, "", path, "prefab-asset", data, scannedGo);
+                var prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
+                foreach (var guid in prefabGuids)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guid);
+                    var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                    if (prefab == null) continue;
+                    WalkGameObject(prefab, "", path, "prefab-asset", data, scannedGo);
+                }
             }
 
             data.entityCount = data.entities.Count;
@@ -145,6 +151,7 @@ public static class EditorSnapshotEmitter
                     data.referenceCount += c.fields.Count;
 
             // ── Write JSON ────────────────────────────────────────────────
+            _skipPrefabScan = false; // prefabs included from now on
             string json = JsonUtility.ToJson(data, true);
             AgentMirrorConfig.SafeWriteAllText(AgentMirrorConfig.EditorSnapshotPath, json);
 

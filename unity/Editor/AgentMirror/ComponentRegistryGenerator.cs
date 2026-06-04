@@ -193,12 +193,18 @@ public static class ComponentRegistryGenerator
             var compEntry = new ComponentEntry { type = comp.GetType().Name };
             var so = new SerializedObject(comp);
             var prop = so.GetIterator();
-
             while (prop.NextVisible(true))
             {
                 if (prop.name == "m_Script") continue; // always a script reference, noise
+                // Use the full property path (handles nested structs like OutputChannel.Index)
+                // Strip the root component prefix to keep it readable
+                string fieldName = prop.propertyPath;
                 var field = CaptureField(prop);
-                if (field != null) compEntry.fields.Add(field);
+                if (field != null)
+                {
+                    field.name = fieldName; // override with full path
+                    compEntry.fields.Add(field);
+                }
             }
 
             if (compEntry.fields.Count > 0 || ShouldShowEmptyComponent(comp))

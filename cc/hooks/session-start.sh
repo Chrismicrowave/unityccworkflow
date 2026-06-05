@@ -1,6 +1,11 @@
 #!/bin/bash
 # session-start.sh — injects project context at session start
 
+# ── codegraph index sync ──────────────────────────────────────────
+if command -v codegraph &> /dev/null; then
+  codegraph sync . -q 2>/dev/null
+fi
+
 # ── jq availability check ──────────────────────────────────────────
 if ! command -v jq &> /dev/null && ! command -v jq.exe &> /dev/null; then
   echo "⚠️  jq is not installed. UCCPack hooks (Play Mode guard, EditorSnapshot diff,"
@@ -38,7 +43,7 @@ echo "  | \`cinemachine.md\` | CM3 Follow/LookAt properties, priority takeover, 
 echo "  | \`prefabs.md\` | Never unpack, non-destructive overrides, asset modification"
 echo "  | \`shaders.md\` | Texel size (never _ScreenParams), Sobel kernel, noise wiggle, FPS quantization"
 echo "  | \`systems.md\` | InputAction HTML-escape fix, Canvas↔world conversion, Awake/Start/OnEnable discipline, no name-based lookups, editor-vs-script values, new input system, no ?? on Unity Objs, script-active-state"
-echo "  | \`tools.md\` | Editor scripts, custom inspectors, build pipelines, wire refs via MCP"
+echo "  | \`tools.md\` | Editor scripts, custom inspectors, build pipelines, wire refs via MCP, codegraph + lsp-mcp C# analysis tools"
 echo "  | \`blind-spots.md\` | Known AI limitations — read before debugging"
 echo "  | \`monobehaviour-lifecycle.md\` | Execution order, message timing, coroutine edge cases"
 echo ""

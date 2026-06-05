@@ -148,7 +148,9 @@ All hooks live in `.claude/hooks/`. They enforce the UnitySnapshot workflow — 
 | `pre-commit` | Git commit (via `.git/hooks/pre-commit`) | ❌ Blocks if Play Mode | Edit `.git/hooks/pre-commit` |
 | `session-start` | Claude session start | Injects ProjectDigest + snapshot status. Generates initial snapshots if missing. | `/unity-rule-off session-start-injection` |
 | `post-compaction` | After CC context compaction | Re-injects context | `/unity-rule-off post-compaction-reinject` |
-| `post-edit-script` | After `.cs` write/edit | Triggers Unity compile | Edit `.claude/unity-mode.json` |
+| `pre-script-write-guard` | Before `Edit`/`Write` on `.cs` files | ❌ Blocks if Play Mode — editing scripts during Play Mode causes confusing compile behavior | `/unity-rule-off pre-script-write-guard` |
+| `pre-set-property` | Before `set_property` | ⚠️ Reminds to check Play Mode state. ⚠️ Reminds to use stableId not name. | `/unity-rule-off pre-set-property-playmode-refusal` |
+| `post-edit-script` | After `.cs` write/edit | Triggers Unity compile. Updates codegraph index. | Edit `.claude/unity-mode.json` |
 | `post-suggest-auto-commit` | After any MCP tool | Suggests git commit | `/unity-rule-off post-suggest-auto-commit` |
 | `stop` | Claude session stop | Session digest + correction ledger | — |
 | `user-prompt-submit` | User submits a prompt | Intent-change detection + SceneTreeSnapshot name injection | `/unity-rule-off user-prompt-submit-injection` |

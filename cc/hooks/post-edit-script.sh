@@ -6,4 +6,9 @@ if [ "$(jq -r '.rules."post-edit-script-stop"' .claude/unity-mode.json 2>/dev/nu
 mkdir -p Library/AgentMirror
 echo "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"hook\":\"post-edit-script\",\"fired\":true}" >> Library/AgentMirror/HookAudit.jsonl
 
+# ── Update codegraph index after every file edit ─────────────
+if command -v codegraph &> /dev/null; then
+  codegraph sync . -q 2>/dev/null
+fi
+
 echo "HOOK: .cs file edited. Run check_compile_errors EXACTLY ONCE. If errors: STOP and surface to user. Do NOT loop. Do NOT attempt auto-fix without user confirmation."

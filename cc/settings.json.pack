@@ -1,11 +1,4 @@
 {
-  "mcpServers": {
-    "codegraph": {
-      "type": "stdio",
-      "command": "codegraph",
-      "args": ["serve", "--mcp"]
-    }
-  },
   "hooks": {
     "SessionStart": [
       {"command": "bash .claude/hooks/session-start.sh"}
@@ -33,6 +26,10 @@
       {
         "matcher": "^Edit$|^Write$",
         "command": "bash .claude/hooks/pre-script-write-guard.sh"
+      },
+      {
+        "matcher": "^Write$",
+        "command": "bash .claude/hooks/pre-write-plan-format.sh \"$TOOL_FILE_PATH\""
       }
     ],
     "PostToolUse": [

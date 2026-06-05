@@ -2,32 +2,21 @@
 
 General Unity editor tool patterns reusable across projects.
 
-## C# Code Analysis: codegraph vs lsp-mcp
+## C# Code Analysis: codegraph
 
-Two tools for C# code intelligence. They're complementary — use appropriately.
-
-**codegraph** (static AST index, CLI-first)
+**codegraph** (static AST index, CLI + MCP)
 - `codegraph query <term>` — instant symbol search (class, method, field)
 - `codegraph callers/callees/impact <symbol>` — call graph & impact analysis
 - `codegraph files` — file structure with symbol counts per file
 - Pre-built SQLite index → sub-second queries even on large projects
-- Best for: structural exploration, call graphs, "what's here" onboarding
+- CLI-first: works in sub-agents, CI, headless, and as an MCP server
 - Auto-synced via hooks (session-start + post-Edit/Write) — always fresh
 
-**lsp-mcp** (OmniSharp/Roslyn LSP, MCP-only)
-- `lsp_workspace_symbols` / `lsp_document_symbols` — symbol queries
-- `lsp_definition` / `lsp_references` / `lsp_implementation` — semantic navigation
-- `lsp_diagnostics` — compiler errors and warnings (unique, not available from codegraph)
-- `lsp_rename` / `lsp_code_action` / `lsp_formatting` — refactoring tools
-- Roslyn-level accuracy (resolved types, not AST guesses)
-- Best for: code quality checks, precise references across interfaces, safe renames
-
 **Setup:**
-- codegraph: `npm install -g @colbymchenry/codegraph` then `codegraph init .`
-- lsp-mcp: `npm install -g @theupsider/lsp-mcp` + OmniSharp binary
-- Both configured as MCP servers in `.claude/settings.json` under `mcpServers`
+- `npm install -g @colbymchenry/codegraph` then `codegraph init .`
+- MCP server configured in `~/.claude/.mcp.json`
 
-**Config reference:**
+**Config reference** (add to `~/.claude/.mcp.json`):
 ```json
 {
   "mcpServers": {
@@ -35,19 +24,13 @@ Two tools for C# code intelligence. They're complementary — use appropriately.
       "type": "stdio",
       "command": "node",
       "args": ["path/to/npm-shim.js", "serve", "--mcp"]
-    },
-    "lsp-mcp": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@theupsider/lsp-mcp@latest"]
     }
   }
 }
 ```
+Requires a Claude Code session restart to take effect.
 
-**Rule of thumb:** codegraph for speed and structure, lsp-mcp for semantic precision and diagnostics. codegraph has a usable CLI (`codegraph query/files/callers`) which makes it accessible from any context; lsp-mcp is MCP-server-only and requires an MCP client.
-
-Full comparison at `codegraph-vs-lsp-mcp.md`.
+codegraph has a usable CLI (`codegraph query/files/callers`) which makes it accessible from any context, including sub-agents, scripts, and CI.
 
 ## Wire references via MCP, never ask
 

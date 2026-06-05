@@ -23,7 +23,7 @@ For each tracked path, run `git diff --no-index -w` (ignore whitespace) between 
 | `.claude/hooks/` | `cc/hooks/` | Hook scripts |
 | `.claude/commands/UCC-*.md` | `cc/commands/UCC-*.md` | UCC command definitions |
 | `.claude/skills/unity-mcp-discipline/` | `cc/skills/unity-mcp-discipline/` | Skill files |
-| `Assets/Editor/AgentMirror/` | `unity/Editor/AgentMirror/` | Editor utilities |
+| `Assets/Scripts/Editor/AgentMirror/` | `unity/Editor/AgentMirror/` | Editor utilities |
 | `Assets/Scripts/Core/StableId.cs` | `unity/Runtime/StableId.cs` | Runtime component |
 | `.claude/settings.json` (hooks section) | `cc/settings.json.pack` | Hook matchers only |
 | `CLAUDE.md` (Code Rules) | `templates/CLAUDE.md.template` | Rules section only |
@@ -77,9 +77,7 @@ Show each divergent file with direction analysis, evidence, and a clear recommen
     Evidence: class name != any project file, but matches AnimatorsSnapshotEmitter (same 261 vs 264 lines, identical internal class `AnimatorAssetPostprocessor`)
     → Delete stale old-name from pack, project has current version
 
-[NEW]  codegraph-vs-lsp-mcp.md
-    Evidence: created today in project, doesn't exist in pack
-    → Backport: new comparison doc
+[NEW]  codegraph-vs-lsp-mcp.md  *(deleted — lsp-mcp removed from project)*
 
 ── Skipped (project-specific) ──
   settings.json — MCP server config (pack only tracks hooks section)

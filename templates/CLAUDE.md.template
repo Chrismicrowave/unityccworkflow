@@ -12,9 +12,12 @@
 - **Editor values beat script defaults** — For any `public` or `[SerializeField] private` variable, always check the Unity Editor inspector value. Inspector-configured values are authoritative; script defaults are just fallbacks.
 - **Always use the new Input System** — Use `InputActionAsset` with generated C# wrapper classes. Never poll `Keyboard.current`/`Mouse.current` directly or use legacy `Input.GetKey`.
 - **Wire references via MCP, never ask** — When you add a new serialized field to a MonoBehaviour in the scene, wire it immediately via `set_property`. Never tell the user to do it. Exceptions: asset references (materials, prefabs), and targets unresolvable by hierarchy path.
+- **Push on command, no questions** — When the user says "push", execute immediately. Stage everything, commit with a reasonable message, push. No checks, no stalling, no questions.
 - **Never `??` with Unity Objects** — Use `if (x == null)` only. Unity fake-nulls bypass C# `??` reference equality.
 - **Stop Play mode before scene edits** — Changes made during Play Mode are discarded when Play Mode stops. Check `playMode` state first.
+- **Reload scene after MCP folder reorg** — Moving assets via file system while Unity is open can break GUID-tracked references (Prefab→Material, Scene→Script). After any bulk folder reorganization, tell the user to **reload the Unity scene** or **Right-click project folder → Reimport** to fix stale references.
 - **Save scene before MCP GO search** — Before calling MCP tools that search the scene hierarchy, save the scene first. Unsaved edits don't exist on disk.
+- **Save scene before every MCP write** — Before any `set_property`, `add_component`, `set_transform`, `execute_script`, or other scene-write MCP call, save the scene first. This preserves any manual editor tweaks so your write doesn't silently overwrite them. `save_scene` first, THEN write.
 - **Commit after each edit** — After every meaningful edit (script change, scene config, rule update), commit immediately with a clear message. Do not batch unrelated changes.
 - **RefHub for shared system references** — Centralize commonly-referenced systems (cameras, UI panels, player scripts) in `RefHub` so multiple consumers pull from the same source. Easy swap, no lost references. Not for gameplay interactions between runtime entities (NPC↔player) — those use find-by-tag/type at runtime.
 - **Script controls initial active state** — Objects that must be active/inactive when the game starts should be set via script (`Awake`/`Start`), not by the GameObject's active toggle in the scene. This lets you toggle GOs on/off while working in the editor without breaking the game's initial state.
@@ -24,6 +27,8 @@
 
 When you discover something worth keeping during a session, propose saving it:
 1. **Pattern** (applies to any Unity game) → `.claude/teams/game-dev/{domain}.md`
-2. **Project** (this prototype only) → `Assets/Docs/ProjectKnow/{domain}.md`
-3. **Principle-level mistake** → project memory (`memory/feedback_*.md`)
-4. **Always ask before writing.** Never save silently.
+2. **Project decision/rationale** → project memory (`memory/`)
+3. **Narrative/design** (not code-adjacent) → `Assets/Docs/Narrative/`
+4. **Temp plans** → `Assets/Docs/Plans/` (with timestamp + self-cleanup step)
+5. **Principle-level mistake** → project memory (`memory/feedback_*.md`)
+6. **Always ask before writing.** Never save silently.

@@ -29,6 +29,6 @@ When you discover something worth keeping during a session, propose saving it:
 1. **Pattern** (applies to any Unity game) → `.claude/teams/game-dev/{domain}.md`
 2. **Project decision/rationale** → project memory (`memory/`)
 3. **Narrative/design** (not code-adjacent) → `Assets/Docs/Narrative/`
-4. **Temp plans** → `Assets/Docs/Plans/` (with timestamp + self-cleanup step)
+4. **Temp plans** → `Assets/Docs/Plans/<descriptive-name>--YYYY-MM-DD--HHMM.md` (descriptive name + timestamp + self-cleanup step)
 5. **Principle-level mistake** → project memory (`memory/feedback_*.md`)
 6. **Always ask before writing.** Never save silently.
